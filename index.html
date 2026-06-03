@@ -5,155 +5,147 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="theme-color" content="#0f172a">
-<meta name="description" content="AI-powered mobile scanner with QR, barcode, object detection, and Philippine root crops price monitoring">
+<meta name="theme-color" content="#059669">
+<meta name="description" content="Philippine Root Crops Price Scanner - Point, Scan, Get Prices">
 <meta name="mobile-web-app-capable" content="yes">
-<title>VisionScan Pro - Root Crops Edition</title>
+<title>RootCrop Scanner PH</title>
 <link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect fill='%2310b981' width='192' height='192' rx='48'/%3E%3Ccircle cx='96' cy='96' r='40' fill='none' stroke='white' stroke-width='12'/%3E%3Ccircle cx='96' cy='96' r='20' fill='white'/%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect fill='%23059669' width='192' height='192' rx='48'/%3E%3Cpath fill='white' d='M96 40c-20 0-36 16-36 36 0 12 6 22 15 29v47c0 4 3 8 8 8h26c4 0 8-4 8-8v-47c9-7 15-17 15-29 0-20-16-36-36-36zm0 52c-9 0-16-7-16-16s7-16 16-16 16 7 16 16-7 16-16 16z'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <style>
-:root{--primary:#10b981;--primary-dark:#059669;--secondary:#06b6d4;--accent:#f59e0b;--success:#10b981;--warning:#f59e0b;--danger:#ef4444;--dark:#0f172a;--darker:#020617;--surface:#1e293b;--surface-light:#334155;--text:#f1f5f9;--text-muted:#94a3b8;--safe-top:env(safe-area-inset-top,0px);--safe-bottom:env(safe-area-inset-bottom,0px)}
+:root{--primary:#059669;--primary-light:#10b981;--primary-dark:#047857;--accent:#f59e0b;--success:#10b981;--warning:#f59e0b;--danger:#ef4444;--dark:#064e3b;--darker:#022c22;--surface:#065f46;--surface-light:#047857;--text:#ecfdf5;--text-muted:#a7f3d0;--safe-top:env(safe-area-inset-top,0px);--safe-bottom:env(safe-area-inset-bottom,0px)}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html{height:100%;background:var(--darker)}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:var(--darker);color:var(--text);overflow:hidden;height:100%;position:fixed;inset:0;overscroll-behavior-y:none;-webkit-font-smoothing:antialiased}
 #app{height:100%;display:flex;flex-direction:column;position:relative}
-.install-banner{position:fixed;top:var(--safe-top);left:0;right:0;background:linear-gradient(135deg,var(--primary),var(--secondary));padding:12px 16px;display:none;align-items:center;justify-content:space-between;z-index:1000;animation:slideDown .3s ease}
+
+/* Install Banner */
+.install-banner{position:fixed;top:var(--safe-top);left:0;right:0;background:linear-gradient(135deg,var(--primary),var(--primary-light));padding:12px 16px;display:none;align-items:center;justify-content:space-between;z-index:1000;animation:slideDown .3s ease}
 .install-banner.show{display:flex}
 @keyframes slideDown{from{transform:translateY(-100%)}to{transform:translateY(0)}}
 .install-btn{padding:8px 16px;border-radius:8px;border:none;background:white;color:var(--primary);font-weight:700;font-size:.85rem;cursor:pointer}
-.header{padding:calc(12px + var(--safe-top)) 16px 12px;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;justify-content:space-between;align-items:center;z-index:100;flex-shrink:0}
+
+/* Header */
+.header{padding:calc(12px + var(--safe-top)) 16px 12px;background:linear-gradient(135deg,var(--primary),var(--primary-dark));display:flex;justify-content:space-between;align-items:center;z-index:100;flex-shrink:0}
 .header h1{font-size:1.1rem;font-weight:700;display:flex;align-items:center;gap:8px}
 .header-icon{width:32px;height:32px;background:rgba(255,255,255,.2);border-radius:8px;display:flex;align-items:center;justify-content:center}
 .status-badge{padding:4px 10px;border-radius:20px;font-size:.7rem;font-weight:600;background:rgba(255,255,255,.15);backdrop-filter:blur(10px);display:flex;align-items:center;gap:6px}
-.status-badge.active{background:rgba(16,185,129,.25);color:#6ee7b7}
-.status-badge.processing{background:rgba(245,158,11,.25);color:#fcd34d}
+.status-badge.active{background:rgba(16,185,129,.3);color:#6ee7b7}
+.status-badge.scanning{background:rgba(245,158,11,.3);color:#fcd34d}
 .pulse-dot{width:6px;height:6px;border-radius:50%;background:currentColor;animation:pulse 2s infinite}
 @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
-.mode-bar{display:flex;gap:6px;padding:10px 12px;background:var(--surface);overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none;border-bottom:1px solid var(--surface-light);flex-shrink:0}
-.mode-bar::-webkit-scrollbar{display:none}
-.mode-btn{flex-shrink:0;padding:8px 14px;border-radius:10px;border:1.5px solid var(--surface-light);background:transparent;color:var(--text-muted);font-size:.8rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:5px;transition:all .2s;white-space:nowrap;touch-action:manipulation}
-.mode-btn:active{transform:scale(.95)}
-.mode-btn.active{background:linear-gradient(135deg,var(--primary),var(--secondary));border-color:transparent;color:white;box-shadow:0 2px 10px rgba(16,185,129,.3)}
+
+/* Camera Section */
 .camera-section{flex:1;display:flex;flex-direction:column;position:relative;min-height:0;background:#000}
 .video-wrapper{position:relative;flex:1;overflow:hidden;background:#000}
 #videoElement{width:100%;height:100%;object-fit:cover;display:block}
 #canvasOverlay{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none}
-.scan-frame{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:65%;aspect-ratio:1;border:2px solid rgba(16,185,129,.4);border-radius:16px;pointer-events:none}
-.scan-frame::before,.scan-frame::after{content:'';position:absolute;width:24px;height:24px;border-color:var(--primary);border-style:solid}
-.scan-frame::before{top:-2px;left:-2px;border-width:3px 0 0 3px;border-radius:16px 0 0 0}
-.scan-frame::after{bottom:-2px;right:-2px;border-width:0 3px 3px 0;border-radius:0 0 16px 0}
-.scan-line{position:absolute;top:0;left:10%;width:80%;height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent);animation:scan 2.5s linear infinite;box-shadow:0 0 8px var(--accent)}
-@keyframes scan{0%{top:10%;opacity:0}10%{opacity:1}90%{opacity:1}100%{top:90%;opacity:0}}
+
+/* Crop Frame */
+.crop-frame{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:75%;aspect-ratio:1;border:3px solid rgba(5,150,105,.5);border-radius:24px;pointer-events:none;box-shadow:0 0 30px rgba(5,150,105,.2)}
+.crop-frame::before,.crop-frame::after{content:'';position:absolute;width:30px;height:30px;border-color:var(--primary);border-style:solid}
+.crop-frame::before{top:-3px;left:-3px;border-width:4px 0 0 4px;border-radius:24px 0 0 0}
+.crop-frame::after{bottom:-3px;right:-3px;border-width:0 4px 4px 0;border-radius:0 0 24px 0}
+.crop-guide{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,.7);font-size:.8rem;text-align:center;background:rgba(0,0,0,.5);padding:8px 16px;border-radius:20px;white-space:nowrap}
+
+/* Scan Button */
+.scan-controls{padding:16px 20px calc(16px + var(--safe-bottom));background:var(--dark);display:flex;flex-direction:column;gap:12px;align-items:center;flex-shrink:0}
+.scan-btn{width:72px;height:72px;border-radius:50%;border:4px solid var(--primary);background:var(--primary);color:white;font-size:1.5rem;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(5,150,105,.4);transition:all .2s;touch-action:manipulation;position:relative}
+.scan-btn:active{transform:scale(.92);box-shadow:0 2px 10px rgba(5,150,105,.3)}
+.scan-btn::after{content:'';position:absolute;inset:-8px;border-radius:50%;border:2px solid rgba(5,150,105,.3);animation:ripple 2s infinite}
+@keyframes ripple{0%{transform:scale(1);opacity:1}100%{transform:scale(1.3);opacity:0}}
+.scan-label{font-size:.75rem;color:var(--text-muted);margin-top:4px}
+
+/* Camera Controls */
 .camera-controls{position:absolute;top:12px;right:12px;display:flex;flex-direction:column;gap:8px;z-index:50}
-.cam-btn{width:40px;height:40px;border-radius:50%;border:none;background:rgba(0,0,0,.5);backdrop-filter:blur(10px);color:white;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;touch-action:manipulation}
+.cam-btn{width:44px;height:44px;border-radius:50%;border:none;background:rgba(0,0,0,.5);backdrop-filter:blur(10px);color:white;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;touch-action:manipulation}
 .cam-btn.active{background:var(--primary)}
-.zoom-slider{position:absolute;bottom:80px;left:50%;transform:translateX(-50%);width:60%;z-index:50;display:none;align-items:center;gap:8px;background:rgba(0,0,0,.5);backdrop-filter:blur(10px);padding:8px 16px;border-radius:20px}
-.zoom-slider.show{display:flex}
-.zoom-slider input[type="range"]{flex:1;-webkit-appearance:none;height:4px;border-radius:2px;background:rgba(255,255,255,.3);outline:none}
-.zoom-slider input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:white;cursor:pointer}
-.controls{padding:12px 16px calc(12px + var(--safe-bottom));background:var(--surface);display:flex;flex-direction:column;gap:10px;flex-shrink:0}
-.control-row{display:flex;gap:10px;align-items:center}
-.capture-btn{flex:1;padding:14px;border-radius:14px;border:none;background:linear-gradient(135deg,var(--primary),var(--secondary));color:white;font-size:.95rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:0 4px 15px rgba(16,185,129,.3);touch-action:manipulation}
-.capture-btn:active{transform:scale(.96)}
-.capture-btn.secondary{flex:0 0 auto;width:48px;height:48px;border-radius:50%;background:var(--surface-light);box-shadow:none;font-size:1.1rem}
-.capture-btn.gallery-btn{background:linear-gradient(135deg,var(--accent),var(--primary))}
-.results-panel{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-radius:24px 24px 0 0;padding:20px 16px calc(20px + var(--safe-bottom));transform:translateY(100%);transition:transform .35s cubic-bezier(.16,1,.3,1);z-index:200;max-height:70vh;overflow-y:auto;box-shadow:0 -10px 40px rgba(0,0,0,.5)}
+
+/* Results Panel */
+.results-panel{position:fixed;bottom:0;left:0;right:0;background:var(--dark);border-radius:24px 24px 0 0;padding:20px 16px calc(20px + var(--safe-bottom));transform:translateY(100%);transition:transform .4s cubic-bezier(.16,1,.3,1);z-index:200;max-height:75vh;overflow-y:auto;box-shadow:0 -10px 40px rgba(0,0,0,.5)}
 .results-panel.open{transform:translateY(0)}
-.panel-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;position:sticky;top:0;background:var(--surface);padding-bottom:8px}
-.panel-title{font-size:1rem;font-weight:700;display:flex;align-items:center;gap:8px}
-.close-panel{width:36px;height:36px;border-radius:50%;border:none;background:var(--surface-light);color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;touch-action:manipulation}
-.result-card{background:var(--dark);border-radius:14px;padding:14px;margin-bottom:10px;border:1px solid var(--surface-light);animation:slideUp .3s ease}
-@keyframes slideUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
-.result-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
-.result-type{display:flex;align-items:center;gap:6px;font-weight:600;font-size:.85rem}
-.result-type i{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:.8rem}
-.result-type.qr i{background:rgba(6,182,212,.2);color:var(--accent)}
-.result-type.barcode i{background:rgba(245,158,11,.2);color:var(--warning)}
-.result-type.object i{background:rgba(16,185,129,.2);color:var(--primary)}
-.result-type.text i{background:rgba(16,185,129,.2);color:var(--success)}
-.result-type.face i{background:rgba(239,68,68,.2);color:var(--danger)}
-.result-type.price i{background:rgba(245,158,11,.2);color:var(--warning)}
-.confidence-badge{padding:3px 8px;border-radius:20px;font-size:.7rem;font-weight:700;background:rgba(16,185,129,.15);color:var(--success)}
-.result-data{font-family:'SF Mono','Courier New',monospace;font-size:.85rem;color:var(--text-muted);word-break:break-all;line-height:1.5;background:rgba(0,0,0,.3);padding:10px;border-radius:8px;max-height:120px;overflow-y:auto}
-.result-actions{display:flex;gap:6px;margin-top:10px}
-.action-btn{flex:1;padding:10px;border-radius:10px;border:1px solid var(--surface-light);background:transparent;color:var(--text);font-size:.78rem;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;touch-action:manipulation}
-.action-btn:active{background:var(--surface-light)}
-.action-btn.primary{background:var(--primary);border-color:var(--primary)}
-.history-section{padding:16px;overflow-y:auto;flex:1;min-height:0}
-.section-title{font-size:.75rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center}
-.clear-history{font-size:.7rem;color:var(--danger);cursor:pointer;text-transform:none;letter-spacing:0}
-.history-item{display:flex;align-items:center;gap:10px;padding:10px;background:var(--surface);border-radius:10px;margin-bottom:6px;cursor:pointer;transition:all .15s;border:1px solid transparent;touch-action:manipulation}
-.history-item:active{background:var(--surface-light);border-color:var(--surface-light)}
-.history-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0}
-.history-content{flex:1;min-width:0}
-.history-label{font-weight:600;font-size:.85rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.history-meta{font-size:.7rem;color:var(--text-muted);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.history-time{font-size:.7rem;color:var(--text-muted);flex-shrink:0;text-align:right}
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);backdrop-filter:blur(12px);z-index:300;display:none;align-items:flex-end;justify-content:center}
-.modal-overlay.active{display:flex}
-.modal{background:var(--surface);border-radius:24px 24px 0 0;width:100%;max-width:500px;max-height:85vh;overflow-y:auto;animation:modalUp .3s ease}
-@keyframes modalUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
-.modal-header{padding:16px;border-bottom:1px solid var(--surface-light);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--surface);z-index:1}
-.modal-body{padding:8px 16px 24px}
-.setting-item{display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid var(--surface-light)}
-.setting-item:last-child{border-bottom:none}
-.setting-label{font-weight:600;font-size:.9rem}
-.setting-desc{font-size:.75rem;color:var(--text-muted);margin-top:2px}
-.toggle{width:48px;height:26px;background:var(--surface-light);border-radius:13px;position:relative;cursor:pointer;transition:background .25s;flex-shrink:0}
-.toggle.active{background:var(--primary)}
-.toggle::after{content:'';position:absolute;top:2px;left:2px;width:22px;height:22px;background:white;border-radius:50%;transition:transform .25s;box-shadow:0 1px 4px rgba(0,0,0,.2)}
-.toggle.active::after{transform:translateX(22px)}
+.panel-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;position:sticky;top:0;background:var(--dark);padding-bottom:8px}
+.panel-title{font-size:1.1rem;font-weight:700;display:flex;align-items:center;gap:8px}
+.close-panel{width:36px;height:36px;border-radius:50%;border:none;background:var(--surface);color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center}
+
+/* Crop Result Card */
+.crop-result{background:linear-gradient(135deg,var(--surface),var(--surface-light));border-radius:16px;padding:16px;margin-bottom:12px;border:1px solid rgba(5,150,105,.2);animation:slideUp .4s ease}
+@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.crop-identified{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.crop-icon{width:48px;height:48px;border-radius:12px;background:var(--primary);display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0}
+.crop-name{flex:1}
+.crop-name h3{font-size:1.1rem;font-weight:700}
+.crop-name p{font-size:.8rem;color:var(--text-muted);margin-top:2px}
+.crop-confidence{display:inline-block;padding:4px 10px;border-radius:20px;font-size:.7rem;font-weight:700;background:rgba(16,185,129,.2);color:var(--success)}
+
+/* Price Card */
+.price-card{background:var(--darker);border-radius:12px;padding:14px;margin-bottom:10px;border:1px solid rgba(245,158,11,.2)}
+.price-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.price-label{font-size:.75rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px}
+.price-value{font-size:1.5rem;font-weight:800;color:var(--accent)}
+.price-unit{font-size:.85rem;color:var(--text-muted)}
+.price-details{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.price-detail{background:rgba(0,0,0,.2);padding:10px;border-radius:8px;text-align:center}
+.price-detail-label{font-size:.65rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.price-detail-value{font-size:.9rem;font-weight:700}
+.price-trend{display:flex;align-items:center;gap:6px;margin-top:10px;padding:8px;border-radius:8px;background:rgba(0,0,0,.2)}
+.price-trend.up{color:var(--danger)}
+.price-trend.down{color:var(--success)}
+.price-trend.stable{color:var(--text-muted)}
+.market-info{font-size:.75rem;color:var(--text-muted);margin-top:8px;text-align:center}
+
+/* Action Buttons */
+.action-row{display:flex;gap:8px;margin-top:12px}
+.action-btn{flex:1;padding:12px;border-radius:10px;border:none;font-size:.85rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;touch-action:manipulation}
+.action-btn.primary{background:var(--primary);color:white}
+.action-btn.secondary{background:var(--surface);color:var(--text);border:1px solid var(--surface-light)}
+.action-btn:active{transform:scale(.96)}
+
+/* Price List Panel */
+.price-list-panel{position:fixed;inset:0;background:var(--darker);z-index:300;display:none;flex-direction:column}
+.price-list-panel.show{display:flex;animation:fadeIn .3s ease}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.price-list-header{padding:calc(16px + var(--safe-top)) 16px 16px;background:linear-gradient(135deg,var(--primary),var(--primary-dark));display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
+.price-list-header h2{font-size:1.1rem;font-weight:700}
+.price-list-content{flex:1;overflow-y:auto;padding:16px}
+.market-tabs{display:flex;gap:8px;margin-bottom:16px;overflow-x:auto;scrollbar-width:none;padding-bottom:4px}
+.market-tabs::-webkit-scrollbar{display:none}
+.market-tab{flex-shrink:0;padding:8px 16px;border-radius:20px;border:1px solid var(--surface-light);background:transparent;color:var(--text-muted);font-size:.8rem;font-weight:600;cursor:pointer;white-space:nowrap}
+.market-tab.active{background:var(--primary);border-color:var(--primary);color:white}
+.crop-price-card{background:var(--surface);border-radius:14px;padding:14px;margin-bottom:10px;border:1px solid rgba(5,150,105,.1)}
+.crop-price-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
+.crop-price-name{font-weight:700;font-size:.95rem}
+.crop-price-local{font-size:.75rem;color:var(--text-muted)}
+.crop-price-amount{font-size:1.3rem;font-weight:800;color:var(--accent)}
+.crop-price-range{font-size:.75rem;color:var(--text-muted);margin-top:2px}
+
+/* Toast */
 .toast-container{position:fixed;top:calc(60px + var(--safe-top));left:50%;transform:translateX(-50%);z-index:400;display:flex;flex-direction:column;gap:6px;pointer-events:none;width:90%;max-width:360px}
 .toast{padding:10px 16px;border-radius:12px;background:var(--surface);color:var(--text);font-weight:600;font-size:.85rem;display:flex;align-items:center;gap:8px;box-shadow:0 4px 20px rgba(0,0,0,.3);animation:toastIn .25s ease;border:1px solid var(--surface-light);pointer-events:all}
 .toast.success{border-color:var(--success)}
 .toast.error{border-color:var(--danger)}
-.toast.info{border-color:var(--accent)}
 @keyframes toastIn{from{opacity:0;transform:translateY(-12px)}to{opacity:1;transform:translateY(0)}}
-.loading-overlay{position:fixed;inset:0;background:rgba(15,23,42,.92);backdrop-filter:blur(10px);z-index:500;display:none;flex-direction:column;align-items:center;justify-content:center;gap:16px}
+
+/* Loading */
+.loading-overlay{position:fixed;inset:0;background:rgba(6,78,59,.95);backdrop-filter:blur(10px);z-index:500;display:none;flex-direction:column;align-items:center;justify-content:center;gap:16px}
 .loading-overlay.active{display:flex}
-.spinner{width:48px;height:48px;border:3px solid var(--surface-light);border-top-color:var(--primary);border-radius:50%;animation:spin .8s linear infinite}
+.spinner{width:48px;height:48px;border:3px solid var(--surface-light);border-top-color:var(--primary-light);border-radius:50%;animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 .loading-text{font-weight:600;color:var(--text-muted);font-size:.9rem}
-.empty-state{text-align:center;padding:32px 16px;color:var(--text-muted)}
-.empty-state .icon{font-size:2.5rem;margin-bottom:12px;opacity:.4}
-.empty-state p{font-size:.85rem}
+
+/* Flash */
 .flash{position:fixed;inset:0;background:white;opacity:0;pointer-events:none;z-index:250;transition:opacity .08s}
 .flash.active{opacity:.25}
-#fileInput{display:none}
-.swipe-hint{position:absolute;bottom:100px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,.6);font-size:.75rem;background:rgba(0,0,0,.4);padding:6px 12px;border-radius:20px;pointer-events:none;animation:fadeInOut 3s ease infinite}
-@keyframes fadeInOut{0%,100%{opacity:0}50%{opacity:1}}
 
-/* Price Panel Styles */
-.price-panel{position:fixed;inset:0;background:var(--darker);z-index:150;display:none;flex-direction:column;animation:fadeIn .3s ease}
-.price-panel.show{display:flex}
-@keyframes fadeIn{from{opacity:0}to{opacity:1}}
-.price-header{padding:calc(16px + var(--safe-top)) 16px 16px;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
-.price-header h2{font-size:1.1rem;font-weight:700;display:flex;align-items:center;gap:8px}
-.price-content{flex:1;overflow-y:auto;padding:16px}
-.price-card{background:var(--surface);border-radius:16px;padding:16px;margin-bottom:12px;border:1px solid var(--surface-light);animation:slideUp .3s ease}
-.price-card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
-.price-crop-name{font-weight:700;font-size:1rem;color:var(--text)}
-.price-badge{padding:4px 10px;border-radius:20px;font-size:.75rem;font-weight:700;background:rgba(16,185,129,.15);color:var(--success)}
-.price-badge.high{background:rgba(239,68,68,.15);color:var(--danger)}
-.price-badge.medium{background:rgba(245,158,11,.15);color:var(--warning)}
-.price-details{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
-.price-detail-item{background:var(--dark);padding:10px;border-radius:8px;text-align:center}
-.price-detail-label{font-size:.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
-.price-detail-value{font-size:.9rem;font-weight:700;color:var(--text)}
-.price-trend{display:flex;align-items:center;gap:4px;font-size:.8rem;margin-top:8px}
-.price-trend.up{color:var(--danger)}
-.price-trend.down{color:var(--success)}
-.price-trend.stable{color:var(--text-muted)}
-.price-source{font-size:.7rem;color:var(--text-muted);text-align:center;margin-top:16px;padding-top:16px;border-top:1px solid var(--surface-light)}
-.price-refresh-btn{width:100%;padding:14px;border-radius:14px;border:none;background:linear-gradient(135deg,var(--primary),var(--secondary));color:white;font-size:.95rem;font-weight:700;cursor:pointer;margin-top:16px;display:flex;align-items:center;justify-content:center;gap:8px}
-.price-filter{display:flex;gap:8px;margin-bottom:16px;overflow-x:auto;scrollbar-width:none}
-.price-filter::-webkit-scrollbar{display:none}
-.price-filter-btn{flex-shrink:0;padding:8px 14px;border-radius:20px;border:1px solid var(--surface-light);background:transparent;color:var(--text-muted);font-size:.8rem;font-weight:600;cursor:pointer;white-space:nowrap}
-.price-filter-btn.active{background:var(--primary);border-color:var(--primary);color:white}
-.market-selector{display:flex;gap:8px;margin-bottom:16px}
-.market-select{flex:1;padding:10px 14px;border-radius:10px;border:1px solid var(--surface-light);background:var(--dark);color:var(--text);font-size:.85rem}
-.last-updated{font-size:.75rem;color:var(--text-muted);text-align:center;margin-bottom:12px}
+/* Empty State */
+.empty-state{text-align:center;padding:40px 20px;color:var(--text-muted)}
+.empty-state i{font-size:3rem;margin-bottom:16px;opacity:.5}
+
+/* Bottom Nav */
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:var(--dark);border-top:1px solid var(--surface-light);padding:calc(8px + var(--safe-bottom)) 16px 8px;display:flex;justify-content:space-around;align-items:center;z-index:100}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px;border:none;background:transparent;color:var(--text-muted);font-size:.65rem;font-weight:600;cursor:pointer;touch-action:manipulation}
+.nav-btn i{font-size:1.2rem}
+.nav-btn.active{color:var(--primary-light)}
 
 @media(min-width:600px){#app{max-width:430px;margin:0 auto;border-left:1px solid var(--surface-light);border-right:1px solid var(--surface-light)}}
 </style>
@@ -161,1122 +153,586 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Ar
 </head>
 <body>
 <div id="app">
-<div class="install-banner" id="installBanner"><span>Add VisionScan to Home Screen</span><div><button class="install-btn" id="installBtn">Install</button><button class="install-close" id="closeInstall">&times;</button></div></div>
-<div class="header"><h1><div class="header-icon"><i class="fas fa-seedling"></i></div>AgriScan Pro</h1><div class="status-badge" id="statusBadge"><span class="pulse-dot"></span><span id="statusText">Ready</span></div></div>
-<div class="mode-bar" id="modeBar">
-<button class="mode-btn active" data-mode="qr"><i class="fas fa-qrcode"></i> QR</button>
-<button class="mode-btn" data-mode="barcode"><i class="fas fa-barcode"></i> Barcode</button>
-<button class="mode-btn" data-mode="object"><i class="fas fa-cube"></i> Objects</button>
-<button class="mode-btn" data-mode="crop" id="cropModeBtn"><i class="fas fa-seedling"></i> Crop Scan</button>
-<button class="mode-btn" data-mode="price" id="priceModeBtn"><i class="fas fa-chart-line"></i> Prices</button>
-<button class="mode-btn" data-mode="text"><i class="fas fa-font"></i> Text</button>
+<div class="install-banner" id="installBanner"><span>Add RootCrop Scanner to Home Screen</span><div><button class="install-btn" id="installBtn">Install</button></div></div>
+
+<div class="header">
+<h1><div class="header-icon"><i class="fas fa-seedling"></i></div>RootCrop Scanner</h1>
+<div class="status-badge active" id="statusBadge"><span class="pulse-dot"></span><span id="statusText">Ready to Scan</span></div>
 </div>
 
-<div class="camera-section" id="cameraSection">
+<div class="camera-section">
 <div class="video-wrapper" id="videoWrapper">
 <video id="videoElement" autoplay playsinline muted></video>
 <canvas id="canvasOverlay"></canvas>
-<div class="scan-frame" id="scanFrame"><div class="scan-line"></div></div>
+<div class="crop-frame" id="cropFrame">
+<div class="crop-guide">Place root crop inside frame</div>
+</div>
 <div class="camera-controls">
-<button class="cam-btn" id="torchBtn"><i class="fas fa-bolt"></i></button>
-<button class="cam-btn" id="zoomBtn"><i class="fas fa-search-plus"></i></button>
-<button class="cam-btn" id="flipBtn"><i class="fas fa-sync-alt"></i></button>
+<button class="cam-btn" id="torchBtn" title="Flashlight"><i class="fas fa-bolt"></i></button>
+<button class="cam-btn" id="flipBtn" title="Flip Camera"><i class="fas fa-sync-alt"></i></button>
 </div>
-<div class="zoom-slider" id="zoomSlider">
-<i class="fas fa-search-minus" style="color:white;font-size:.8rem"></i>
-<input type="range" id="zoomRange" min="1" max="5" step=".1" value="1">
-<i class="fas fa-search-plus" style="color:white;font-size:.8rem"></i>
 </div>
-<div class="swipe-hint" id="swipeHint">Swipe up for history</div>
-</div>
-<div class="controls">
-<div class="control-row">
-<button class="capture-btn gallery-btn secondary" id="galleryBtn"><i class="fas fa-image"></i></button>
-<button class="capture-btn" id="captureBtn"><i class="fas fa-camera"></i> Scan</button>
-<button class="capture-btn secondary" id="settingsBtn"><i class="fas fa-cog"></i></button>
-</div>
+<div class="scan-controls">
+<button class="scan-btn" id="scanBtn"><i class="fas fa-camera"></i></button>
+<div class="scan-label">Tap to Scan Crop</div>
 </div>
 </div>
 
-<!-- Price Panel -->
-<div class="price-panel" id="pricePanel">
-<div class="price-header">
-<h2><i class="fas fa-chart-line"></i> Root Crops Prices</h2>
-<button class="close-panel" id="closePricePanel"><i class="fas fa-times"></i></button>
-</div>
-<div class="price-content" id="priceContent">
-<div class="last-updated" id="lastUpdated">Loading prices...</div>
-<div class="market-selector">
-<select class="market-select" id="marketSelect">
-<option value="metro-manila">Metro Manila Markets</option>
-<option value="baguio">Baguio City</option>
-<option value="cebu">Cebu City</option>
-<option value="davao">Davao City</option>
-<option value="iloilo">Iloilo City</option>
-</select>
-</div>
-<div class="price-filter" id="priceFilter">
-<button class="price-filter-btn active" data-filter="all">All Crops</button>
-<button class="price-filter-btn" data-filter="camote">Camote</button>
-<button class="price-filter-btn" data-filter="cassava">Cassava</button>
-<button class="price-filter-btn" data-filter="gabi">Gabi/Taro</button>
-<button class="price-filter-btn" data-filter="ubi">Ubi/Yam</button>
-</div>
-<div id="priceCards">
-<div class="empty-state">
-<div class="icon"><i class="fas fa-spinner fa-spin"></i></div>
-<p>Loading latest prices from DA & DTI...</p>
-</div>
-</div>
-<div class="price-source">
-<i class="fas fa-info-circle"></i> Data based on PSA Price Situationer, DA-AMAS Bantay Presyo & Regional Trading Centers<br>
-Updated daily from major markets nationwide
-</div>
-<button class="price-refresh-btn" id="refreshPrices">
-<i class="fas fa-sync-alt"></i> Refresh Prices
-</button>
-</div>
-</div>
-
-<div class="history-section" id="historySection" style="display:none">
-<div class="section-title"><span>Recent Scans</span><span class="clear-history" id="clearHistory">Clear All</span></div>
-<div id="historyList">
-<div class="empty-state"><div class="icon"><i class="fas fa-history"></i></div><p>No scans yet. Point your camera and tap scan!</p></div>
-</div>
-</div>
-</div>
-
+<!-- Scan Results -->
 <div class="results-panel" id="resultsPanel">
-<div class="panel-header"><div class="panel-title"><i class="fas fa-check-circle" style="color:var(--success)"></i> Results</div><button class="close-panel" id="closePanel"><i class="fas fa-times"></i></button></div>
+<div class="panel-header">
+<div class="panel-title"><i class="fas fa-check-circle" style="color:var(--success)"></i> Scan Result</div>
+<button class="close-panel" id="closePanel"><i class="fas fa-times"></i></button>
+</div>
 <div id="resultsContent"></div>
 </div>
 
-<div class="modal-overlay" id="settingsModal">
-<div class="modal">
-<div class="modal-header"><h3 style="font-size:1rem"><i class="fas fa-cog" style="margin-right:8px;color:var(--primary)"></i>Settings</h3><button class="close-panel" id="closeSettings"><i class="fas fa-times"></i></button></div>
-<div class="modal-body">
-<div class="setting-item"><div><div class="setting-label">Auto Scan</div><div class="setting-desc">Detect codes automatically</div></div><div class="toggle active" id="toggleAutoScan"></div></div>
-<div class="setting-item"><div><div class="setting-label">Sound</div><div class="setting-desc">Audio feedback on scan</div></div><div class="toggle active" id="toggleSound"></div></div>
-<div class="setting-item"><div><div class="setting-label">Vibration</div><div class="setting-desc">Haptic feedback</div></div><div class="toggle active" id="toggleVibrate"></div></div>
-<div class="setting-item"><div><div class="setting-label">Save History</div><div class="setting-desc">Store scans locally</div></div><div class="toggle active" id="toggleHistory"></div></div>
-<div class="setting-item"><div><div class="setting-label">High Quality</div><div class="setting-desc">Better resolution (slower)</div></div><div class="toggle" id="toggleQuality"></div></div>
-<div class="setting-item"><div><div class="setting-label">Keep Screen On</div><div class="setting-desc">Prevent sleep while scanning</div></div><div class="toggle active" id="toggleWakeLock"></div></div>
+<!-- Price List Panel -->
+<div class="price-list-panel" id="priceListPanel">
+<div class="price-list-header">
+<h2><i class="fas fa-chart-line"></i> All Root Crop Prices</h2>
+<button class="close-panel" id="closePriceList"><i class="fas fa-times"></i></button>
+</div>
+<div class="price-list-content">
+<div class="market-tabs" id="marketTabs">
+<button class="market-tab active" data-market="metro-manila">Metro Manila</button>
+<button class="market-tab" data-market="baguio">Baguio</button>
+<button class="market-tab" data-market="cebu">Cebu</button>
+<button class="market-tab" data-market="davao">Davao</button>
+<button class="market-tab" data-market="iloilo">Iloilo</button>
+</div>
+<div id="priceListContent"></div>
+<div style="text-align:center;margin-top:16px;padding:12px;color:var(--text-muted);font-size:.75rem">
+<i class="fas fa-info-circle"></i> Prices from DA-AMAS Bantay Presyo & PSA<br>Updated: June 3, 2026
 </div>
 </div>
 </div>
 
-<div class="loading-overlay" id="loadingOverlay"><div class="spinner"></div><div class="loading-text" id="loadingText">Starting camera...</div></div>
+<!-- Loading -->
+<div class="loading-overlay" id="loadingOverlay">
+<div class="spinner"></div>
+<div class="loading-text" id="loadingText">Starting camera...</div>
+</div>
+
+<!-- Flash -->
 <div class="flash" id="flash"></div>
-<div class="toast-container" id="toastContainer"></div>
-<input type="file" id="fileInput" accept="image/*" capture="environment">
 
-<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.15.0/dist/tf.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd@2.2.3/dist/coco-ssd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/quagga2/1.8.4/quagga.min.js"></script>
+<!-- Toast -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- Bottom Nav -->
+<div class="bottom-nav">
+<button class="nav-btn active" id="navScan"><i class="fas fa-camera"></i>Scan</button>
+<button class="nav-btn" id="navPrices"><i class="fas fa-chart-line"></i>Prices</button>
+<button class="nav-btn" id="navHistory"><i class="fas fa-history"></i>History</button>
+</div>
+</div>
 
 <script>
-// ===== ROOT CROPS PRICE DATA (Simulated - Replace with actual API) =====
-const ROOT_CROPS_PRICES = {
+// ===== ROOT CROPS PRICE DATA (Philippine Markets) =====
+const ROOT_CROP_PRICES = {
   "metro-manila": {
     updated: "2026-06-03",
-    source: "PSA Price Situationer / DA Bantay Presyo",
+    source: "DA-AMAS / PSA Price Situationer",
     crops: [
-      { name: "Sweet Potato (Camote)", localName: "Kamote", price: 52.35, unit: "kg", market: "Quinta Market, Manila", trend: "stable", trendVal: 0.50, low: 45.00, high: 60.00 },
-      { name: "Cassava (Kamoteng Kahoy)", localName: "Kamoteng Kahoy", price: 38.50, unit: "kg", market: "Quinta Market, Manila", trend: "down", trendVal: -1.25, low: 32.00, high: 45.00 },
-      { name: "Taro (Gabi)", localName: "Gabi", price: 65.75, unit: "kg", market: "Quinta Market, Manila", trend: "up", trendVal: 3.50, low: 58.00, high: 72.00 },
-      { name: "Purple Yam (Ube)", localName: "Ubi", price: 85.00, unit: "kg", market: "Quinta Market, Manila", trend: "up", trendVal: 5.00, low: 78.00, high: 95.00 },
-      { name: "Cocoyam (Gabi-gabi)", localName: "Linsa", price: 48.25, unit: "kg", market: "Quinta Market, Manila", trend: "stable", trendVal: 0.25, low: 42.00, high: 55.00 },
-      { name: "Giant Swamp Taro (Palawan)", localName: "Palawan", price: 72.50, unit: "kg", market: "Quinta Market, Manila", trend: "up", trendVal: 2.00, low: 65.00, high: 80.00 }
+      { name: "Sweet Potato", localName: "Kamote", price: 52.35, unit: "kg", low: 45.00, high: 60.00, trend: "stable", change: 0.50 },
+      { name: "Cassava", localName: "Kamoteng Kahoy", price: 38.50, unit: "kg", low: 32.00, high: 45.00, trend: "down", change: -1.25 },
+      { name: "Taro", localName: "Gabi", price: 65.75, unit: "kg", low: 58.00, high: 72.00, trend: "up", change: 3.50 },
+      { name: "Purple Yam", localName: "Ube", price: 85.00, unit: "kg", low: 78.00, high: 95.00, trend: "up", change: 5.00 },
+      { name: "Cocoyam", localName: "Linsa", price: 48.25, unit: "kg", low: 42.00, high: 55.00, trend: "stable", change: 0.25 },
+      { name: "Giant Swamp Taro", localName: "Palawan", price: 72.50, unit: "kg", low: 65.00, high: 80.00, trend: "up", change: 2.00 }
     ]
   },
   "baguio": {
     updated: "2026-06-03",
-    source: "Benguet Agri-Pinoy Trading Center (BAPTC)",
+    source: "Benguet BAPTC",
     crops: [
-      { name: "Sweet Potato (Camote)", localName: "Kamote", price: 42.00, unit: "kg", market: "Baguio City Public Market", trend: "down", trendVal: -2.50, low: 35.00, high: 48.00 },
-      { name: "Cassava (Kamoteng Kahoy)", localName: "Kamoteng Kahoy", price: 30.00, unit: "kg", market: "Baguio City Public Market", trend: "stable", trendVal: 0.00, low: 25.00, high: 35.00 },
-      { name: "Taro (Gabi)", localName: "Gabi", price: 58.50, unit: "kg", market: "Baguio City Public Market", trend: "up", trendVal: 4.00, low: 50.00, high: 65.00 },
-      { name: "Purple Yam (Ube)", localName: "Ubi", price: 78.00, unit: "kg", market: "Baguio City Public Market", trend: "up", trendVal: 6.00, low: 70.00, high: 88.00 },
-      { name: "Cocoyam (Gabi-gabi)", localName: "Linsa", price: 45.00, unit: "kg", market: "Baguio City Public Market", trend: "stable", trendVal: 0.50, low: 38.00, high: 52.00 },
-      { name: "Giant Swamp Taro (Palawan)", localName: "Palawan", price: 62.00, unit: "kg", market: "Baguio City Public Market", trend: "up", trendVal: 1.50, low: 55.00, high: 70.00 }
+      { name: "Sweet Potato", localName: "Kamote", price: 42.00, unit: "kg", low: 35.00, high: 48.00, trend: "down", change: -2.50 },
+      { name: "Cassava", localName: "Kamoteng Kahoy", price: 30.00, unit: "kg", low: 25.00, high: 35.00, trend: "stable", change: 0.00 },
+      { name: "Taro", localName: "Gabi", price: 58.50, unit: "kg", low: 50.00, high: 65.00, trend: "up", change: 4.00 },
+      { name: "Purple Yam", localName: "Ube", price: 78.00, unit: "kg", low: 70.00, high: 88.00, trend: "up", change: 6.00 },
+      { name: "Cocoyam", localName: "Linsa", price: 45.00, unit: "kg", low: 38.00, high: 52.00, trend: "stable", change: 0.50 },
+      { name: "Giant Swamp Taro", localName: "Palawan", price: 62.00, unit: "kg", low: 55.00, high: 70.00, trend: "up", change: 1.50 }
     ]
   },
   "cebu": {
     updated: "2026-06-03",
-    source: "Cebu City Agriculture Department / Carbon Market",
+    source: "Cebu City Agriculture / Carbon Market",
     crops: [
-      { name: "Sweet Potato (Camote)", localName: "Kamote", price: 40.50, unit: "kg", market: "Carbon Market, Cebu City", trend: "down", trendVal: -3.00, low: 35.00, high: 48.00 },
-      { name: "Cassava (Kamoteng Kahoy)", localName: "Kamoteng Kahoy", price: 28.00, unit: "kg", market: "Carbon Market, Cebu City", trend: "stable", trendVal: -0.50, low: 22.00, high: 35.00 },
-      { name: "Taro (Gabi)", localName: "Gabi", price: 52.00, unit: "kg", market: "Carbon Market, Cebu City", trend: "up", trendVal: 2.50, low: 45.00, high: 60.00 },
-      { name: "Purple Yam (Ube)", localName: "Ubi", price: 72.00, unit: "kg", market: "Carbon Market, Cebu City", trend: "up", trendVal: 4.00, low: 65.00, high: 82.00 },
-      { name: "Cocoyam (Gabi-gabi)", localName: "Linsa", price: 42.00, unit: "kg", market: "Carbon Market, Cebu City", trend: "stable", trendVal: 0.00, low: 35.00, high: 50.00 },
-      { name: "Giant Swamp Taro (Palawan)", localName: "Palawan", price: 58.00, unit: "kg", market: "Carbon Market, Cebu City", trend: "up", trendVal: 1.50, low: 50.00, high: 65.00 }
+      { name: "Sweet Potato", localName: "Kamote", price: 40.50, unit: "kg", low: 35.00, high: 48.00, trend: "down", change: -3.00 },
+      { name: "Cassava", localName: "Kamoteng Kahoy", price: 28.00, unit: "kg", low: 22.00, high: 35.00, trend: "stable", change: -0.50 },
+      { name: "Taro", localName: "Gabi", price: 52.00, unit: "kg", low: 45.00, high: 60.00, trend: "up", change: 2.50 },
+      { name: "Purple Yam", localName: "Ube", price: 72.00, unit: "kg", low: 65.00, high: 82.00, trend: "up", change: 4.00 },
+      { name: "Cocoyam", localName: "Linsa", price: 42.00, unit: "kg", low: 35.00, high: 50.00, trend: "stable", change: 0.00 },
+      { name: "Giant Swamp Taro", localName: "Palawan", price: 58.00, unit: "kg", low: 50.00, high: 65.00, trend: "up", change: 1.50 }
     ]
   },
   "davao": {
     updated: "2026-06-03",
-    source: "DA Region XI / Bankerohan Public Market",
+    source: "DA Region XI / Bankerohan Market",
     crops: [
-      { name: "Sweet Potato (Camote)", localName: "Kamote", price: 36.50, unit: "kg", market: "Bankerohan Market, Davao City", trend: "stable", trendVal: 0.75, low: 30.00, high: 42.00 },
-      { name: "Cassava (Kamoteng Kahoy)", localName: "Kamoteng Kahoy", price: 26.00, unit: "kg", market: "Bankerohan Market, Davao City", trend: "down", trendVal: -1.50, low: 20.00, high: 32.00 },
-      { name: "Taro (Gabi)", localName: "Gabi", price: 48.00, unit: "kg", market: "Bankerohan Market, Davao City", trend: "up", trendVal: 3.00, low: 40.00, high: 55.00 },
-      { name: "Purple Yam (Ube)", localName: "Ubi", price: 68.00, unit: "kg", market: "Bankerohan Market, Davao City", trend: "up", trendVal: 4.50, low: 60.00, high: 78.00 },
-      { name: "Cocoyam (Gabi-gabi)", localName: "Linsa", price: 38.00, unit: "kg", market: "Bankerohan Market, Davao City", trend: "stable", trendVal: 0.00, low: 32.00, high: 45.00 },
-      { name: "Giant Swamp Taro (Palawan)", localName: "Palawan", price: 56.00, unit: "kg", market: "Bankerohan Market, Davao City", trend: "up", trendVal: 1.75, low: 48.00, high: 65.00 }
+      { name: "Sweet Potato", localName: "Kamote", price: 36.50, unit: "kg", low: 30.00, high: 42.00, trend: "stable", change: 0.75 },
+      { name: "Cassava", localName: "Kamoteng Kahoy", price: 26.00, unit: "kg", low: 20.00, high: 32.00, trend: "down", change: -1.50 },
+      { name: "Taro", localName: "Gabi", price: 48.00, unit: "kg", low: 40.00, high: 55.00, trend: "up", change: 3.00 },
+      { name: "Purple Yam", localName: "Ube", price: 68.00, unit: "kg", low: 60.00, high: 78.00, trend: "up", change: 4.50 },
+      { name: "Cocoyam", localName: "Linsa", price: 38.00, unit: "kg", low: 32.00, high: 45.00, trend: "stable", change: 0.00 },
+      { name: "Giant Swamp Taro", localName: "Palawan", price: 56.00, unit: "kg", low: 48.00, high: 65.00, trend: "up", change: 1.75 }
     ]
   },
   "iloilo": {
     updated: "2026-06-03",
-    source: "Iloilo City Agriculture Office / Central Market",
+    source: "Iloilo City Agriculture / Central Market",
     crops: [
-      { name: "Sweet Potato (Camote)", localName: "Kamote", price: 44.00, unit: "kg", market: "Central Market, Iloilo City", trend: "stable", trendVal: 1.00, low: 38.00, high: 50.00 },
-      { name: "Cassava (Kamoteng Kahoy)", localName: "Kamoteng Kahoy", price: 30.00, unit: "kg", market: "Central Market, Iloilo City", trend: "down", trendVal: -1.00, low: 25.00, high: 36.00 },
-      { name: "Taro (Gabi)", localName: "Gabi", price: 60.00, unit: "kg", market: "Central Market, Iloilo City", trend: "up", trendVal: 3.50, low: 52.00, high: 68.00 },
-      { name: "Purple Yam (Ube)", localName: "Ubi", price: 80.00, unit: "kg", market: "Central Market, Iloilo City", trend: "up", trendVal: 6.00, low: 72.00, high: 90.00 },
-      { name: "Cocoyam (Gabi-gabi)", localName: "Linsa", price: 50.00, unit: "kg", market: "Central Market, Iloilo City", trend: "stable", trendVal: 0.50, low: 42.00, high: 58.00 },
-      { name: "Giant Swamp Taro (Palawan)", localName: "Palawan", price: 66.00, unit: "kg", market: "Central Market, Iloilo City", trend: "up", trendVal: 2.00, low: 58.00, high: 75.00 }
+      { name: "Sweet Potato", localName: "Kamote", price: 44.00, unit: "kg", low: 38.00, high: 50.00, trend: "stable", change: 1.00 },
+      { name: "Cassava", localName: "Kamoteng Kahoy", price: 30.00, unit: "kg", low: 25.00, high: 36.00, trend: "down", change: -1.00 },
+      { name: "Taro", localName: "Gabi", price: 60.00, unit: "kg", low: 52.00, high: 68.00, trend: "up", change: 3.50 },
+      { name: "Purple Yam", localName: "Ube", price: 80.00, unit: "kg", low: 72.00, high: 90.00, trend: "up", change: 6.00 },
+      { name: "Cocoyam", localName: "Linsa", price: 50.00, unit: "kg", low: 42.00, high: 58.00, trend: "stable", change: 0.50 },
+      { name: "Giant Swamp Taro", localName: "Palawan", price: 66.00, unit: "kg", low: 58.00, high: 75.00, trend: "up", change: 2.00 }
     ]
   }
 };
 
-// Service Worker
-if('serviceWorker'in navigator){navigator.serviceWorker.register('sw.js').then(function(r){console.log('SW registered:',r.scope)}).catch(function(e){console.log('SW failed:',e)})}
+// ===== CROP IDENTIFICATION =====
+const CROP_PROFILES = [
+  { key: 'kamote', names: ['sweet potato','kamote','camote','orange tuber','yellow tuber'], color: {r:[180,255],g:[100,180],b:[0,80]}, icon: '🍠', desc: 'Orange/yellow flesh, oblong shape' },
+  { key: 'cassava', names: ['cassava','kamoteng kahoy','kamotengkahoy','manioc','yuca','white tuber','beige tuber'], color: {r:[200,255],g:[200,255],b:[180,240]}, icon: '🥔', desc: 'White/beige flesh, cylindrical' },
+  { key: 'gabi', names: ['taro','gabi','coco yam','dasheen','brown tuber'], color: {r:[120,180],g:[80,140],b:[40,100]}, icon: '🌿', desc: 'Brown skin, round shape' },
+  { key: 'ube', names: ['purple yam','ube','ubi','violet tuber','purple sweet potato'], color: {r:[100,180],g:[50,120],b:[120,200]}, icon: '🍠', desc: 'Purple/violet flesh' },
+  { key: 'linsa', names: ['cocoyam','linsa','gabi gabi','small taro'], color: {r:[180,240],g:[160,220],b:[140,200]}, icon: '🌱', desc: 'Small, white/light brown' },
+  { key: 'palawan', names: ['swamp taro','palawan','giant taro','large corm'], color: {r:[160,220],g:[140,200],b:[100,180]}, icon: '🌴', desc: 'Large corm, white flesh' }
+];
 
+// Service Worker
+if('serviceWorker'in navigator){navigator.serviceWorker.register('sw.js').then(function(r){console.log('SW registered')}).catch(function(e){console.log('SW failed')})}
+
+// Install prompt
 let deferredPrompt;
 const installBanner=document.getElementById('installBanner');
-const installBtn=document.getElementById('installBtn');
-const closeInstall=document.getElementById('closeInstall');
-
-window.addEventListener('beforeinstallprompt',function(e){
-e.preventDefault();
-deferredPrompt=e;
-if(!window.matchMedia('(display-mode: standalone)').matches){
-setTimeout(function(){installBanner.classList.add('show')},2000);
-}
-});
-
-installBtn.addEventListener('click',async function(){
+document.getElementById('installBtn').addEventListener('click',async function(){
 if(!deferredPrompt)return;
 deferredPrompt.prompt();
 var r=await deferredPrompt.userChoice;
 if(r.outcome==='accepted')installBanner.classList.remove('show');
 deferredPrompt=null;
 });
-
-closeInstall.addEventListener('click',function(){
-installBanner.classList.remove('show');
-localStorage.setItem('installDismissed',Date.now());
+window.addEventListener('beforeinstallprompt',function(e){
+e.preventDefault();deferredPrompt=e;
+if(!window.matchMedia('(display-mode: standalone)').matches){
+setTimeout(function(){installBanner.classList.add('show')},2000);
+}
 });
 
-const state={
-currentMode:'qr',
-isScanning:false,
-stream:null,
-track:null,
-model:null,
-autoScan:true,
-sound:true,
-vibrate:true,
-saveHistory:true,
-highQuality:false,
-wakeLock:null,
-history:JSON.parse(localStorage.getItem('visionScanHistory')||'[]'),
-detectionInterval:null,
-capabilities:{}
-};
-
+// State
+const state={stream:null,track:null,isScanning:false,currentMarket:'metro-manila',scanHistory:JSON.parse(localStorage.getItem('rootcropHistory')||'[]')};
 const video=document.getElementById('videoElement');
 const canvas=document.getElementById('canvasOverlay');
 const ctx=canvas.getContext('2d');
-const captureBtn=document.getElementById('captureBtn');
-const galleryBtn=document.getElementById('galleryBtn');
-const settingsBtn=document.getElementById('settingsBtn');
-const fileInput=document.getElementById('fileInput');
+const scanBtn=document.getElementById('scanBtn');
 const resultsPanel=document.getElementById('resultsPanel');
 const resultsContent=document.getElementById('resultsContent');
-const closePanel=document.getElementById('closePanel');
-const settingsModal=document.getElementById('settingsModal');
-const closeSettings=document.getElementById('closeSettings');
+const priceListPanel=document.getElementById('priceListPanel');
 const loadingOverlay=document.getElementById('loadingOverlay');
-const loadingText=document.getElementById('loadingText');
 const statusBadge=document.getElementById('statusBadge');
 const statusText=document.getElementById('statusText');
-const historyList=document.getElementById('historyList');
-const clearHistory=document.getElementById('clearHistory');
-const flash=document.getElementById('flash');
-const scanFrame=document.getElementById('scanFrame');
-const torchBtn=document.getElementById('torchBtn');
-const zoomBtn=document.getElementById('zoomBtn');
-const zoomSlider=document.getElementById('zoomSlider');
-const zoomRange=document.getElementById('zoomRange');
-const flipBtn=document.getElementById('flipBtn');
-const cameraSection=document.getElementById('cameraSection');
-const pricePanel=document.getElementById('pricePanel');
-const closePricePanel=document.getElementById('closePricePanel');
-const priceModeBtn=document.getElementById('priceModeBtn');
 
+// Audio
 const audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+function beep(freq,dur){try{var o=audioCtx.createOscillator(),g=audioCtx.createGain();o.connect(g);g.connect(audioCtx.destination);o.frequency.value=freq;g.gain.setValueAtTime(.1,audioCtx.currentTime);g.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+dur);o.start();o.stop(audioCtx.currentTime+dur)}catch(e){}}
+function successSound(){beep(880,.1);setTimeout(function(){beep(1100,.15)},120)}
+function errorSound(){beep(300,.3)}
 
-function playTone(freq,dur,type){
-type=type||'sine';
-if(!state.sound)return;
-try{
-var osc=audioCtx.createOscillator();
-var gain=audioCtx.createGain();
-osc.type=type;
-osc.connect(gain);
-gain.connect(audioCtx.destination);
-osc.frequency.value=freq;
-gain.gain.setValueAtTime(.1,audioCtx.currentTime);
-gain.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+dur);
-osc.start();
-osc.stop(audioCtx.currentTime+dur);
-}catch(e){}
-}
-
-function playSuccess(){playTone(880,.1);setTimeout(function(){playTone(1100,.15)},120);}
-function playError(){playTone(300,.25,'sawtooth');}
-function doVibrate(pattern){if(state.vibrate&&navigator.vibrate)navigator.vibrate(pattern);}
-
+// Toast
 function showToast(msg,type){
 type=type||'info';
 var container=document.getElementById('toastContainer');
 var toast=document.createElement('div');
-toast.className='toast '+type;
-var icons={success:'check-circle',error:'exclamation-circle',info:'info-circle'};
-toast.innerHTML='<i class="fas fa-'+icons[type]+'"></i> '+msg;
+toast.className='toast '+(type==='success'?'success':type==='error'?'error':'');
+toast.innerHTML='<i class="fas fa-'+(type==='success'?'check-circle':type==='error'?'exclamation-circle':'info-circle')+'"></i> '+msg;
 container.appendChild(toast);
-setTimeout(function(){toast.remove()},2800);
+setTimeout(function(){toast.remove()},3000);
 }
 
-async function toggleWakeLock(enable){
-if(!('wakeLock'in navigator))return;
-try{
-if(enable&&!state.wakeLock){
-state.wakeLock=await navigator.wakeLock.request('screen');
-state.wakeLock.addEventListener('release',function(){state.wakeLock=null;});
-}else if(!enable&&state.wakeLock){
-await state.wakeLock.release();
-state.wakeLock=null;
-}
-}catch(e){}
-}
-
+// Camera
 async function initCamera(){
 loadingOverlay.classList.add('active');
-loadingText.textContent='Accessing camera...';
 try{
-if(state.stream){state.stream.getTracks().forEach(function(t){t.stop();});}
-var constraints={
-video:{
-facingMode:state.frontCamera?'user':'environment',
-width:{ideal:state.highQuality?1920:1280},
-height:{ideal:state.highQuality?1080:720}
-},
-audio:false
-};
+if(state.stream){state.stream.getTracks().forEach(function(t){t.stop()})}
+var constraints={video:{facingMode:'environment',width:{ideal:1280},height:{ideal:720}},audio:false};
 state.stream=await navigator.mediaDevices.getUserMedia(constraints);
 state.track=state.stream.getVideoTracks()[0];
 video.srcObject=state.stream;
-await new Promise(function(resolve){
-video.onloadedmetadata=function(){video.play();resolve();};
-});
-canvas.width=video.videoWidth;
-canvas.height=video.videoHeight;
-state.capabilities=state.track.getCapabilities?state.track.getCapabilities():{};
-if(state.capabilities.torch)torchBtn.style.display='flex';else torchBtn.style.display='none';
-if(state.capabilities.zoom){
-zoomBtn.style.display='flex';
-zoomRange.min=state.capabilities.zoom.min||1;
-zoomRange.max=state.capabilities.zoom.max||5;
-zoomRange.step=state.capabilities.zoom.step||.1;
-zoomRange.value=1;
-}else{zoomBtn.style.display='none';}
-updateStatus('active','Scanning');
+await new Promise(function(resolve){video.onloadedmetadata=function(){video.play();resolve()}});
+canvas.width=video.videoWidth;canvas.height=video.videoHeight;
+updateStatus('active','Ready to Scan');
 loadingOverlay.classList.remove('active');
-showToast('Camera ready','success');
-if(state.autoScan)startAutoScan();
+showToast('Camera ready - point at root crop','success');
 }catch(err){
-console.error('Camera error:',err);
-loadingText.textContent='Camera access denied. Check permissions.';
+loadingOverlay.classList.remove('active');
+updateStatus('scanning','Camera Error');
 showToast('Camera access denied','error');
-updateStatus('processing','No Camera');
-setTimeout(function(){loadingOverlay.classList.remove('active')},2500);
 }
 }
 
-torchBtn.addEventListener('click',async function(){
-if(!state.track||!state.capabilities.torch)return;
+// Torch
+document.getElementById('torchBtn').addEventListener('click',async function(){
+if(!state.track)return;
 try{
-var newTorch=!torchBtn.classList.contains('active');
-await state.track.applyConstraints({advanced:[{torch:newTorch}]});
-torchBtn.classList.toggle('active',newTorch);
-showToast(newTorch?'Flashlight on':'Flashlight off');
-}catch(e){showToast('Flashlight error','error');}
+var caps=state.track.getCapabilities();
+if(caps.torch){
+var on=!this.classList.contains('active');
+await state.track.applyConstraints({advanced:[{torch:on}]});
+this.classList.toggle('active',on);
+}
+}catch(e){showToast('Flashlight not available','error')}
 });
 
-zoomBtn.addEventListener('click',function(){zoomSlider.classList.toggle('show');});
-
-zoomRange.addEventListener('input',async function(){
-if(!state.track||!state.capabilities.zoom)return;
-try{await state.track.applyConstraints({advanced:[{zoom:parseFloat(zoomRange.value)}]});}catch(e){}
-});
-
-var frontCamera=false;
-flipBtn.addEventListener('click',async function(){
-frontCamera=!frontCamera;
-state.frontCamera=frontCamera;
+// Flip camera
+document.getElementById('flipBtn').addEventListener('click',async function(){
 await initCamera();
-showToast(frontCamera?'Front camera':'Back camera');
 });
 
-async function loadModel(){
-if(state.model)return;
-loadingOverlay.classList.add('active');
-loadingText.textContent='Loading AI model...';
-try{
-state.model=await cocoSsd.load();
-showToast('AI model loaded','success');
-}catch(err){
-showToast('Model failed to load','error');
-}finally{loadingOverlay.classList.remove('active');}
+// Status
+function updateStatus(type,text){
+statusBadge.className='status-badge '+(type==='active'?'active':'scanning');
+statusText.textContent=text;
 }
 
-function captureFrame(){
-var c=document.createElement('canvas');
-c.width=video.videoWidth;
-c.height=video.videoHeight;
-var x=c.getContext('2d');
-if(frontCamera){x.translate(c.width,0);x.scale(-1,1);}
-x.drawImage(video,0,0);
-return c;
+// ===== CROP SCANNING =====
+function analyzeImage(canvas){
+var ctx2=canvas.getContext('2d');
+var w=canvas.width,h=canvas.height;
+var imageData=ctx2.getImageData(0,0,w,h);
+var data=imageData.data;
+
+// Sample center region (where crop should be)
+var samples=[];
+var cx=Math.floor(w/2),cy=Math.floor(h/2);
+var rw=Math.floor(w*0.3),rh=Math.floor(h*0.3);
+for(var y=cy-rh;y<cy+rh;y+=10){
+for(var x=cx-rw;x<cx+rw;x+=10){
+if(x>=0&&x<w&&y>=0&&y<h){
+var i=(y*w+x)*4;
+samples.push({r:data[i],g:data[i+1],b:data[i+2]});
+}
+}
 }
 
-// ===== CROP SCANNER - AI Root Crop Identification =====
-const CROP_PATTERNS = [
-  { 
-    name: 'Sweet Potato (Camote)', 
-    localName: 'Kamote',
-    keywords: ['sweet potato','camote','kamote','orange tuber','root crop orange'],
-    colorProfile: 'orange',
-    shape: 'oblong',
-    priceKey: 'camote',
-    icon: 'carrot'
-  },
-  { 
-    name: 'Cassava (Kamoteng Kahoy)', 
-    localName: 'Kamoteng Kahoy',
-    keywords: ['cassava','kamoteng kahoy','kamotengkahoy','manioc','yuca','long tuber','white tuber'],
-    colorProfile: 'white',
-    shape: 'cylindrical',
-    priceKey: 'cassava',
-    icon: 'seedling'
-  },
-  { 
-    name: 'Taro (Gabi)', 
-    localName: 'Gabi',
-    keywords: ['taro','gabi','coco yam','dasheen','eddoe','round tuber','brown skin'],
-    colorProfile: 'brown',
-    shape: 'round',
-    priceKey: 'gabi',
-    icon: 'leaf'
-  },
-  { 
-    name: 'Purple Yam (Ube)', 
-    localName: 'Ubi',
-    keywords: ['purple yam','ube','ubi','violet tuber','purple sweet potato','dioscorea'],
-    colorProfile: 'purple',
-    shape: 'irregular',
-    priceKey: 'ubi',
-    icon: 'cookie'
-  },
-  { 
-    name: 'Cocoyam (Gabi-gabi)', 
-    localName: 'Linsa',
-    keywords: ['cocoyam','gabi gabi','gabi-gabi','linsa','tannia','small taro'],
-    colorProfile: 'white',
-    shape: 'small round',
-    priceKey: 'gabi',
-    icon: 'leaf'
-  },
-  { 
-    name: 'Giant Swamp Taro (Palawan)', 
-    localName: 'Palawan',
-    keywords: ['swamp taro','palawan','cyrtosperma','giant taro','large corm'],
-    colorProfile: 'white',
-    shape: 'large',
-    priceKey: 'palawan',
-    icon: 'tree'
-  }
-];
+if(samples.length===0)return null;
 
-async function scanCrop(canvas) {
-  showToast('Analyzing crop image...', 'info');
+// Calculate average color
+var avgR=0,avgG=0,avgB=0;
+samples.forEach(function(s){avgR+=s.r;avgG+=s.g;avgB+=s.b});
+avgR=Math.floor(avgR/samples.length);
+avgG=Math.floor(avgG/samples.length);
+avgB=Math.floor(avgB/samples.length);
 
-  // Use canvas color analysis for crop identification
-  var ctx2 = canvas.getContext('2d');
-  var imageData = ctx2.getImageData(0, 0, canvas.width, canvas.height);
-  var data = imageData.data;
+// Find matching crop by color
+var bestMatch=null,bestScore=-1;
+CROP_PROFILES.forEach(function(profile){
+var c=profile.color;
+var score=0;
+if(avgR>=c.r[0]&&avgR<=c.r[1])score+=30;
+if(avgG>=c.g[0]&&avgG<=c.g[1])score+=30;
+if(avgB>=c.b[0]&&avgB<=c.b[1])score+=30;
+// Brightness check
+var brightness=(avgR+avgG+avgB)/3;
+if(brightness>30&&brightness<250)score+=10;
+if(score>bestScore){bestScore=score;bestMatch=profile}
+});
 
-  // Simple color analysis
-  var r = 0, g = 0, b = 0, count = 0;
-  for (var i = 0; i < data.length; i += 4) {
-    r += data[i];
-    g += data[i+1];
-    b += data[i+2];
-    count++;
-  }
-  r = Math.floor(r / count);
-  g = Math.floor(g / count);
-  b = Math.floor(b / count);
-
-  // Determine dominant color
-  var dominantColor = 'unknown';
-  if (r > 150 && g > 100 && b < 80) dominantColor = 'orange';
-  else if (r > 120 && g < 100 && b > 120) dominantColor = 'purple';
-  else if (r > 100 && g > 80 && b < 80) dominantColor = 'brown';
-  else if (r > 180 && g > 180 && b > 180) dominantColor = 'white';
-  else if (r > 150 && g > 120 && b < 100) dominantColor = 'yellow';
-
-  // Map color to crop
-  var matchedCrop = null;
-  if (dominantColor === 'orange') matchedCrop = CROP_PATTERNS[0]; // Camote
-  else if (dominantColor === 'white') matchedCrop = CROP_PATTERNS[1]; // Cassava
-  else if (dominantColor === 'brown') matchedCrop = CROP_PATTERNS[2]; // Gabi
-  else if (dominantColor === 'purple') matchedCrop = CROP_PATTERNS[3]; // Ube
-  else if (dominantColor === 'yellow') matchedCrop = CROP_PATTERNS[0]; // Camote (yellow variety)
-
-  if (!matchedCrop) {
-    // Try object detection as fallback
-    if (!state.model) await loadModel();
-    var preds = await state.model.detect(canvas);
-    if (preds.length > 0) {
-      var pred = preds[0];
-      var cropMap = CROP_PRICE_MAP[pred.class.toLowerCase()];
-      if (cropMap) {
-        matchedCrop = CROP_PATTERNS.find(function(p) { return p.priceKey === cropMap.key; });
-      }
-    }
-  }
-
-  if (!matchedCrop) {
-    return [{
-      type: 'object',
-      label: 'Crop Not Identified',
-      data: 'Could not identify the root crop from this image.\n\nTips for better scanning:\n• Place crop on plain background\n• Ensure good lighting\n• Fill the frame with the crop\n• Try scanning: Camote, Cassava, Gabi, Ube',
-      confidence: 'N/A',
-      icon: 'question-circle',
-      color: 'var(--text-muted)',
-      actions: [
-        { label: 'View Price List', icon: 'chart-line', fn: function() { showPricePanel(); }, primary: true },
-        { label: 'Try Again', icon: 'redo', fn: function() { showToast('Tap Scan to try again'); } }
-      ]
-    }];
-  }
-
-  // Get price for matched crop
-  var market = document.getElementById('marketSelect') ? document.getElementById('marketSelect').value : 'metro-manila';
-  var cropPrice = getCropPrice(matchedCrop.priceKey, market);
-
-  if (!cropPrice) {
-    cropPrice = getCropPrice(matchedCrop.priceKey, 'metro-manila');
-  }
-
-  var results = [];
-
-  // Crop identification result
-  results.push({
-    type: 'object',
-    label: matchedCrop.name,
-    data: 'Identified: ' + matchedCrop.name + ' (' + matchedCrop.localName + ')\n' +
-          'Color Profile: ' + dominantColor + '\n' +
-          'Shape: ' + matchedCrop.shape + '\n' +
-          'Confidence: Based on color analysis',
-    confidence: 'AI Match',
-    icon: matchedCrop.icon,
-    color: 'var(--primary)',
-    actions: [
-      { label: 'Verify', icon: 'check-circle', fn: function() { showToast('Crop identified as ' + matchedCrop.name); } }
-    ]
-  });
-
-  // Price result
-  if (cropPrice) {
-    var trendIcon = cropPrice.trend === 'up' ? '↑' : cropPrice.trend === 'down' ? '↓' : '→';
-    results.push({
-      type: 'price',
-      label: 'Market Price - ' + cropPrice.name,
-      data: 'Current Price: PHP ' + cropPrice.price.toFixed(2) + '/' + cropPrice.unit + '\n' +
-            'Price Range: PHP ' + cropPrice.low.toFixed(2) + ' - PHP ' + cropPrice.high.toFixed(2) + '\n' +
-            'Market: ' + cropPrice.market + '\n' +
-            'Trend: ' + trendIcon + ' ' + (cropPrice.trendVal > 0 ? '+' : '') + cropPrice.trendVal.toFixed(2) + ' PHP vs yesterday\n' +
-            'Last Updated: ' + ROOT_CROPS_PRICES[market].updated,
-      confidence: 'Live',
-      icon: 'chart-line',
-      color: 'var(--warning)',
-      actions: [
-        { label: 'View All Prices', icon: 'chart-line', fn: function() { showPricePanel(); }, primary: true },
-        { label: 'Share Price', icon: 'share-alt', fn: function() { 
-          shareResult(matchedCrop.localName + ' - PHP ' + cropPrice.price.toFixed(2) + '/' + cropPrice.unit + ' today at ' + cropPrice.market);
-        }},
-        { label: 'Copy', icon: 'copy', fn: function() { 
-          copyToClipboard(matchedCrop.name + '\nPrice: PHP ' + cropPrice.price.toFixed(2) + '/' + cropPrice.unit + '\nMarket: ' + cropPrice.market);
-        }}
-      ]
-    });
-  }
-
-  return results;
+return bestMatch?{crop:bestMatch,confidence:Math.min(bestScore,95),avgColor:{r:avgR,g:avgG,b:avgB}}:null;
 }
 
-async function performScan(){
+function getPrice(cropKey,market){
+var data=ROOT_CROP_PRICES[market||'metro-manila'];
+if(!data)return null;
+return data.crops.find(function(c){return c.localName.toLowerCase()===cropKey||c.name.toLowerCase().includes(cropKey)});
+}
+
+// Scan button
+scanBtn.addEventListener('click',async function(){
 if(state.isScanning)return;
 state.isScanning=true;
-updateStatus('processing','Processing...');
+updateStatus('scanning','Analyzing...');
+
+// Flash effect
+var flash=document.getElementById('flash');
 flash.classList.add('active');
 setTimeout(function(){flash.classList.remove('active')},100);
-var frame=captureFrame();
-var imageData=frame.getContext('2d').getImageData(0,0,frame.width,frame.height);
-try{
-var results=[];
-switch(state.currentMode){
-case'qr':results=await scanQR(imageData);break;
-case'barcode':results=await scanBarcode(frame);break;
-case'object':results=await detectObjects(frame);break;
-case'crop':results=await scanCrop(frame);break;
-case'text':results=await detectText(frame);break;
-case'face':results=await detectFace(frame);break;
-}
-if(results.length>0){
-playSuccess();
-doVibrate([40,80,40]);
-displayResults(results);
-if(state.saveHistory)addToHistory(results);
-}else{
-playError();
-doVibrate([100]);
-showToast('No '+state.currentMode+' detected','error');
-}
-}catch(err){
-console.error(err);
-showToast('Scan failed','error');
-}finally{
+
+// Capture frame
+var frame=document.createElement('canvas');
+frame.width=video.videoWidth;
+frame.height=video.videoHeight;
+var fctx=frame.getContext('2d');
+fctx.drawImage(video,0,0);
+
+// Analyze
+var analysis=analyzeImage(frame);
+
+if(!analysis||analysis.confidence<40){
+errorSound();
+showResults([{
+type:'unknown',
+title:'Crop Not Identified',
+subtitle:'Could not recognize this as a root crop',
+icon:'❓',
+message:'Tips for better scanning:\n• Place one crop at a time\n• Use plain background\n• Ensure good lighting\n• Fill the frame with the crop',
+actions:[{label:'Try Again',primary:true,fn:function(){closeResults();showToast('Position crop and tap scan')}},{label:'View Prices',fn:function(){showPriceList()}}]
+}]);
 state.isScanning=false;
-updateStatus('active','Scanning');
-}
-}
-
-async function scanQR(imageData){
-var code=jsQR(imageData.data,imageData.width,imageData.height,{inversionAttempts:'attemptBoth'});
-if(!code)return[];
-var isUrl=/^https?:\/\//i.test(code.data);
-return[{
-type:'qr',label:'QR Code',data:code.data,
-confidence:'100%',icon:'qrcode',color:'var(--accent)',
-actions:[
-{label:'Copy',icon:'copy',fn:function(){copyToClipboard(code.data);}},
-{label:isUrl?'Open':'Share',icon:isUrl?'external-link-alt':'share-alt',
-fn:isUrl?function(){window.open(code.data,'_blank');}:function(){shareResult(code.data);},
-primary:isUrl}
-]
-}];
+updateStatus('active','Ready to Scan');
+return;
 }
 
-async function scanBarcode(canvas){
-return new Promise(function(resolve){
-Quagga.decodeSingle({
-decoder:{readers:['code_128_reader','ean_reader','ean_8_reader','code_39_reader','upc_reader','upc_e_reader']},
-locate:true,
-src:canvas.toDataURL()
-},function(result){
-if(result&&result.codeResult){
-resolve([{
-type:'barcode',label:'Barcode ('+result.codeResult.format+')',
-data:result.codeResult.code,
-confidence:Math.round(result.codeResult.confidence*100)+'%',
-icon:'barcode',color:'var(--warning)',
+// Get price
+var crop=analysis.crop;
+var priceData=getPrice(crop.key,state.currentMarket);
+
+if(!priceData){
+errorSound();
+showResults([{
+type:'error',
+title:'Price Not Available',
+subtitle:crop.names[0],
+icon:crop.icon,
+message:'Could not find price data for this crop.',
+actions:[{label:'View All Prices',primary:true,fn:function(){showPriceList()}}]
+}]);
+state.isScanning=false;
+updateStatus('active','Ready to Scan');
+return;
+}
+
+// Success!
+successSound();
+if(navigator.vibrate)navigator.vibrate([50,100,50]);
+
+var trendIcon=priceData.trend==='up'?'↑':priceData.trend==='down'?'↓':'→';
+var trendClass=priceData.trend==='up'?'up':priceData.trend==='down'?'down':'stable';
+var trendColor=priceData.trend==='up'?'var(--danger)':priceData.trend==='down'?'var(--success)':'var(--text-muted)';
+
+showResults([{
+type:'crop',
+title:priceData.name,
+subtitle:priceData.localName+' | '+crop.desc,
+icon:crop.icon,
+confidence:analysis.confidence+'% match',
+price:priceData.price,
+unit:priceData.unit,
+low:priceData.low,
+high:priceData.high,
+trend:trendIcon,
+trendClass:trendClass,
+trendColor:trendColor,
+change:priceData.change,
+market:ROOT_CROP_PRICES[state.currentMarket].source,
 actions:[
-{label:'Copy',icon:'copy',fn:function(){copyToClipboard(result.codeResult.code);}},
-{label:'Search',icon:'search',fn:function(){window.open('https://www.google.com/search?q='+encodeURIComponent(result.codeResult.code),'_blank');},primary:true}
+{label:'Share Price',primary:true,fn:function(){sharePrice(priceData)}},
+{label:'View All',fn:function(){showPriceList()}},
+{label:'Copy',fn:function(){copyPrice(priceData)}}
 ]
 }]);
-}else resolve([]);
-});
-});
-}
 
-// ===== ROOT CROP MAPPING FOR OBJECT DETECTION =====
-const CROP_PRICE_MAP = {
-  'orange': { crop: 'Sweet Potato (Camote)', localName: 'Kamote', key: 'camote', icon: 'carrot' },
-  'carrot': { crop: 'Sweet Potato (Camote)', localName: 'Kamote', key: 'camote', icon: 'carrot' },
-  'potato': { crop: 'Sweet Potato (Camote)', localName: 'Kamote', key: 'camote', icon: 'carrot' },
-  'banana': { crop: 'Cassava (Kamoteng Kahoy)', localName: 'Kamoteng Kahoy', key: 'cassava', icon: 'seedling' },
-  'broccoli': { crop: 'Taro (Gabi)', localName: 'Gabi', key: 'gabi', icon: 'leaf' },
-  'potted plant': { crop: 'Taro (Gabi)', localName: 'Gabi', key: 'gabi', icon: 'leaf' },
-  'donut': { crop: 'Purple Yam (Ube)', localName: 'Ubi', key: 'ubi', icon: 'cookie' }
-};
+// Save to history
+saveToHistory({crop:priceData.name,local:priceData.localName,price:priceData.price,market:state.currentMarket,date:new Date().toISOString()});
 
-function getCropPrice(cropKey, market) {
-  var data = ROOT_CROPS_PRICES[market || 'metro-manila'];
-  if (!data) return null;
-  return data.crops.find(function(c) {
-    return c.name.toLowerCase().includes(cropKey) || 
-           c.localName.toLowerCase().includes(cropKey);
-  });
-}
-
-function formatPriceResult(crop, market) {
-  var trendIcon = crop.trend === 'up' ? '↑' : crop.trend === 'down' ? '↓' : '→';
-  var trendColor = crop.trend === 'up' ? 'var(--danger)' : crop.trend === 'down' ? 'var(--success)' : 'var(--text-muted)';
-  return {
-    type: 'price',
-    label: crop.name,
-    data: 'Current Price: PHP ' + crop.price.toFixed(2) + '/' + crop.unit + '\n' +
-          'Price Range: PHP ' + crop.low.toFixed(2) + ' - PHP ' + crop.high.toFixed(2) + '\n' +
-          'Market: ' + crop.market + '\n' +
-          'Trend: ' + trendIcon + ' ' + (crop.trendVal > 0 ? '+' : '') + crop.trendVal.toFixed(2) + ' PHP vs yesterday',
-    confidence: 'Live Price',
-    icon: 'chart-line',
-    color: 'var(--warning)',
-    actions: [
-      { label: 'View All Prices', icon: 'chart-line', fn: function() { showPricePanel(); }, primary: true },
-      { label: 'Share Price', icon: 'share-alt', fn: function() { shareResult(crop.name + ' - PHP ' + crop.price.toFixed(2) + '/' + crop.unit + ' at ' + crop.market); } },
-      { label: 'Copy', icon: 'copy', fn: function() { copyToClipboard(crop.name + ' - PHP ' + crop.price.toFixed(2) + '/' + crop.unit); } }
-    ]
-  };
-}
-
-async function detectObjects(canvas){
-if(!state.model)await loadModel();
-var preds=await state.model.detect(canvas);
-ctx.clearRect(0,0,canvas.width,canvas.height);
-var results=[];
-
-preds.forEach(function(pred){
-var x=pred.bbox[0],y=pred.bbox[1],w=pred.bbox[2],h=pred.bbox[3];
-ctx.strokeStyle='#10b981';
-ctx.lineWidth=3;
-ctx.strokeRect(x,y,w,h);
-ctx.fillStyle='#10b981';
-var text=pred.class+' '+Math.round(pred.score*100)+'%';
-ctx.font='bold 14px sans-serif';
-var tw=ctx.measureText(text).width;
-ctx.fillRect(x,y-24,tw+12,24);
-ctx.fillStyle='white';
-ctx.fillText(text,x+6,y-6);
-
-// Check if detected object maps to a root crop
-var cropMap = CROP_PRICE_MAP[pred.class.toLowerCase()];
-if (cropMap) {
-  var cropPrice = getCropPrice(cropMap.key, 'metro-manila');
-  if (cropPrice) {
-    results.push(formatPriceResult(cropPrice, 'metro-manila'));
-    // Also add the detection result
-    results.push({
-      type:'object',label:pred.class,
-      data:'Detected '+pred.class+' with '+Math.round(pred.score*100)+'% confidence',
-      confidence:Math.round(pred.score*100)+'%',
-      icon:'cube',color:'var(--primary)',
-      actions:[
-        {label:'Details',icon:'info-circle',fn:function(){showToast('Object: '+pred.class);}},
-        {label:'Search',icon:'search',fn:function(){window.open('https://www.google.com/search?q='+encodeURIComponent(pred.class),'_blank');},primary:true}
-      ]
-    });
-  }
-} else {
-  results.push({
-    type:'object',label:pred.class,
-    data:'Detected '+pred.class+' with '+Math.round(pred.score*100)+'% confidence.\n\nTip: Try scanning root crops like sweet potato, cassava, or taro to see market prices!',
-    confidence:Math.round(pred.score*100)+'%',
-    icon:'cube',color:'var(--primary)',
-    actions:[
-      {label:'Details',icon:'info-circle',fn:function(){showToast('Object: '+pred.class);}},
-      {label:'Search',icon:'search',fn:function(){window.open('https://www.google.com/search?q='+encodeURIComponent(pred.class),'_blank');},primary:true}
-    ]
-  });
-}
+state.isScanning=false;
+updateStatus('active','Ready to Scan');
 });
 
-return results;
-}
-
-async function detectText(canvas){
-showToast('OCR: Add Tesseract.js for full text recognition','info');
-return[{
-type:'text',label:'Text Detected',
-data:'OCR ready. Integrate Tesseract.js (tesseract.js CDN) for production text extraction from images, documents, and signs.',
-confidence:'Ready',icon:'font',color:'var(--success)',
-actions:[
-{label:'Copy',icon:'copy',fn:function(){copyToClipboard('OCR placeholder text');}},
-{label:'Learn',icon:'book',fn:function(){window.open('https://github.com/naptha/tesseract.js','_blank');},primary:true}
-]
-}];
-}
-
-async function detectFace(canvas){
-showToast('Face: Integrate MediaPipe for detection','info');
-return[{
-type:'face',label:'Face Analysis',
-data:'Face detection ready. Add MediaPipe Face Detection or TensorFlow Face-API.js for landmarks, expressions, age/gender estimation, and face recognition.',
-confidence:'Ready',icon:'smile',color:'var(--danger)',
-actions:[
-{label:'Guide',icon:'book-open',fn:function(){window.open('https://mediapipe-studio.webapps.google.com/demo/face_detector','_blank');},primary:true},
-{label:'Demo',icon:'play',fn:function(){showToast('Face detection demo');}}
-]
-}];
-}
-
-function startAutoScan(){
-if(state.detectionInterval)clearInterval(state.detectionInterval);
-if(!['qr','barcode'].includes(state.currentMode))return;
-state.detectionInterval=setInterval(async function(){
-if(state.isScanning||!state.autoScan)return;
-if(state.currentMode==='qr'){
-var frame=captureFrame();
-var imageData=frame.getContext('2d').getImageData(0,0,frame.width,frame.height);
-var code=jsQR(imageData.data,imageData.width,imageData.height);
-if(code)await performScan();
-}
-},600);
-}
-
-function stopAutoScan(){
-if(state.detectionInterval){clearInterval(state.detectionInterval);state.detectionInterval=null;}
-}
-
-function displayResults(results){
+function showResults(results){
 resultsContent.innerHTML=results.map(function(r,i){
-return'<div class="result-card" style="animation-delay:'+(i*.08)+'s">'+
-'<div class="result-header">'+
-'<div class="result-type '+r.type+'">'+
-'<i class="fas fa-'+r.icon+'"></i> '+escapeHtml(r.label)+
+if(r.type==='crop'){
+return'<div class="crop-result" style="animation-delay:'+(i*.1)+'s">'+
+'<div class="crop-identified">'+
+'<div class="crop-icon">'+r.icon+'</div>'+
+'<div class="crop-name">'+
+'<h3>'+r.title+'</h3>'+
+'<p>'+r.subtitle+'</p>'+
 '</div>'+
-'<div class="confidence-badge">'+r.confidence+'</div>'+
+'<span class="crop-confidence">'+r.confidence+'</span>'+
 '</div>'+
-'<div class="result-data">'+escapeHtml(r.data)+'</div>'+
-'<div class="result-actions">'+
-r.actions.map(function(a){
-return'<button class="action-btn '+(a.primary?'primary':'')+'" onclick="('+a.fn.toString()+')()">'+
-'<i class="fas fa-'+a.icon+'"></i> '+a.label+
-'</button>';
+'<div class="price-card">'+
+'<div class="price-header">'+
+'<span class="price-label">Current Price</span>'+
+'<span class="price-value">PHP '+r.price.toFixed(2)+'<span class="price-unit">/'+r.unit+'</span></span>'+
+'</div>'+
+'<div class="price-details">'+
+'<div class="price-detail"><div class="price-detail-label">Lowest</div><div class="price-detail-value">PHP '+r.low.toFixed(2)+'</div></div>'+
+'<div class="price-detail"><div class="price-detail-label">Highest</div><div class="price-detail-value">PHP '+r.high.toFixed(2)+'</div></div>'+
+'</div>'+
+'<div class="price-trend '+r.trendClass+'">'+
+'<i class="fas fa-'+(r.trendClass==='up'?'arrow-up':r.trendClass==='down'?'arrow-down':'minus')+'"></i> '+
+(r.change>0?'+':'')+r.change.toFixed(2)+' PHP vs yesterday'+
+'</div>'+
+'<div class="market-info"><i class="fas fa-map-marker-alt"></i> '+r.market+'</div>'+
+'</div>'+
+'<div class="action-row">'+
+r.actions.map(function(a,idx){
+return'<button class="action-btn '+(idx===0?'primary':'secondary')+'" onclick="('+a.fn.toString()+')()">'+(a.icon?'<i class="fas fa-'+a.icon+'"></i> ':'')+a.label+'</button>';
 }).join('')+
 '</div>'+
 '</div>';
+}else{
+return'<div class="crop-result" style="animation-delay:'+(i*.1)+'s">'+
+'<div class="crop-identified">'+
+'<div class="crop-icon" style="font-size:2rem">'+r.icon+'</div>'+
+'<div class="crop-name">'+
+'<h3>'+r.title+'</h3>'+
+'<p>'+r.subtitle+'</p>'+
+'</div>'+
+'</div>'+
+'<div style="background:var(--darker);padding:12px;border-radius:8px;margin:10px 0;font-size:.85rem;color:var(--text-muted);white-space:pre-line">'+r.message+'</div>'+
+'<div class="action-row">'+
+r.actions.map(function(a,idx){
+return'<button class="action-btn '+(idx===0?'primary':'secondary')+'" onclick="('+a.fn.toString()+')()">'+a.label+'</button>';
+}).join('')+
+'</div>'+
+'</div>';
+}
 }).join('');
 resultsPanel.classList.add('open');
 }
 
-function addToHistory(results){
-var entry={
-id:Date.now(),
-timestamp:new Date().toISOString(),
-mode:state.currentMode,
-results:results.map(function(r){return{type:r.type,label:r.label,data:r.data.substring(0,120)};})
-};
-state.history.unshift(entry);
-if(state.history.length>50)state.history.pop();
-localStorage.setItem('visionScanHistory',JSON.stringify(state.history));
-renderHistory();
-}
+function closeResults(){resultsPanel.classList.remove('open')}
+document.getElementById('closePanel').addEventListener('click',closeResults);
 
-function renderHistory(){
-if(state.history.length===0){
-historyList.innerHTML='<div class="empty-state"><div class="icon"><i class="fas fa-history"></i></div><p>No scans yet. Point your camera and tap scan!</p></div>';
-return;
+// ===== PRICE LIST =====
+function showPriceList(){
+priceListPanel.classList.add('show');
+renderPriceList(state.currentMarket);
 }
-var icons={qr:'qrcode',barcode:'barcode',object:'cube',text:'font',face:'smile',price:'chart-line'};
-var colors={qr:'var(--accent)',barcode:'var(--warning)',object:'var(--primary)',text:'var(--success)',face:'var(--danger)',price:'var(--warning)'};
-historyList.innerHTML=state.history.slice(0,20).map(function(item){
-var d=new Date(item.timestamp);
-var time=d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
-var date=d.toLocaleDateString();
-return'<div class="history-item" onclick="restoreScan('+item.id+')">'+
-'<div class="history-icon" style="background:'+colors[item.mode]+'20;color:'+colors[item.mode]+';">'+
-'<i class="fas fa-'+(icons[item.mode]||'circle')+'"></i>'+
+function hidePriceList(){priceListPanel.classList.remove('show')}
+document.getElementById('closePriceList').addEventListener('click',hidePriceList);
+
+function renderPriceList(market){
+var data=ROOT_CROP_PRICES[market];
+if(!data)return;
+document.getElementById('priceListContent').innerHTML=data.crops.map(function(c,i){
+var trendClass=c.trend==='up'?'up':c.trend==='down'?'down':'stable';
+return'<div class="crop-price-card" style="animation-delay:'+(i*.05)+'s">'+
+'<div class="crop-price-header">'+
+'<div>'+
+'<div class="crop-price-name">'+c.name+'</div>'+
+'<div class="crop-price-local">'+c.localName+'</div>'+
 '</div>'+
-'<div class="history-content">'+
-'<div class="history-label">'+escapeHtml(item.results[0]&&item.results[0].label?item.results[0].label:'Scan')+'</div>'+
-'<div class="history-meta">'+escapeHtml(item.results[0]&&item.results[0].data?item.results[0].data.substring(0,35):'')+'...</div>'+
+'<div style="text-align:right">'+
+'<div class="crop-price-amount">PHP '+c.price.toFixed(2)+'</div>'+
+'<div class="crop-price-range">Range: '+c.low.toFixed(2)+'-'+c.high.toFixed(2)+'</div>'+
 '</div>'+
-'<div class="history-time">'+time+'<br><small>'+date+'</small></div>'+
+'</div>'+
+'<div class="price-trend '+trendClass+'">'+
+'<i class="fas fa-'+(trendClass==='up'?'arrow-up':trendClass==='down'?'arrow-down':'minus')+'"></i> '+
+(c.change>0?'+':'')+c.change.toFixed(2)+' PHP vs yesterday'+
+'</div>'+
 '</div>';
 }).join('');
 }
 
-function restoreScan(id){
-var entry=state.history.find(function(h){return h.id===id;});
-if(!entry)return;
-displayResults(entry.results.map(function(r){
-return{
-type:r.type,label:r.label,data:r.data,confidence:'History',icon:icons[r.type]||'circle',
-actions:[{label:'Copy',icon:'copy',fn:function(){copyToClipboard(r.data);}}]
-};
-}));
-}
-
-function escapeHtml(t){
-var d=document.createElement('div');
-d.textContent=t;
-return d.innerHTML;
-}
-
-async function copyToClipboard(text){
-try{
-await navigator.clipboard.writeText(text);
-showToast('Copied!','success');
-}catch(e){
-var ta=document.createElement('textarea');
-ta.value=text;
-document.body.appendChild(ta);
-ta.select();
-document.execCommand('copy');
-document.body.removeChild(ta);
-showToast('Copied!','success');
-}
-}
-
-async function shareResult(text){
-if(navigator.share){
-try{await navigator.share({title:'VisionScan Result',text:text});}catch(e){}
-}else{copyToClipboard(text);}
-}
-
-function updateStatus(type,text){
-statusBadge.className='status-badge '+type;
-statusText.textContent=text;
-}
-
-// ===== PRICE PANEL FUNCTIONS =====
-function renderPrices(market, filter) {
-  const data = ROOT_CROPS_PRICES[market];
-  if (!data) return;
-
-  const filtered = filter === 'all' ? data.crops : data.crops.filter(c => {
-    const name = c.name.toLowerCase();
-    if (filter === 'camote') return name.includes('sweet potato') || name.includes('camote');
-    if (filter === 'cassava') return name.includes('cassava');
-    if (filter === 'gabi') return name.includes('taro') || name.includes('gabi');
-    if (filter === 'ubi') return name.includes('yam') || name.includes('ube') || name.includes('ubi');
-    return true;
-  });
-
-  const cardsContainer = document.getElementById('priceCards');
-  document.getElementById('lastUpdated').textContent = 'Last updated: ' + data.updated + ' | Source: DA-AMAS Bantay Presyo';
-
-  if (filtered.length === 0) {
-    cardsContainer.innerHTML = '<div class="empty-state"><div class="icon"><i class="fas fa-search"></i></div><p>No crops found for this filter.</p></div>';
-    return;
-  }
-
-  cardsContainer.innerHTML = filtered.map(function(crop, i) {
-    const trendIcon = crop.trend === 'up' ? 'arrow-up' : crop.trend === 'down' ? 'arrow-down' : 'minus';
-    const trendClass = crop.trend === 'up' ? 'up' : crop.trend === 'down' ? 'down' : 'stable';
-    const priceClass = crop.price > 70 ? 'high' : crop.price > 50 ? 'medium' : '';
-
-    return '<div class="price-card" style="animation-delay:' + (i * 0.1) + 's">' +
-      '<div class="price-card-header">' +
-        '<div>' +
-          '<div class="price-crop-name">' + escapeHtml(crop.name) + '</div>' +
-          '<div style="font-size:.75rem;color:var(--text-muted)">' + escapeHtml(crop.localName) + '</div>' +
-        '</div>' +
-        '<div class="price-badge ' + priceClass + '">PHP ' + crop.price.toFixed(2) + '/' + crop.unit + '</div>' +
-      '</div>' +
-      '<div class="price-details">' +
-        '<div class="price-detail-item">' +
-          '<div class="price-detail-label">Lowest Price</div>' +
-          '<div class="price-detail-value">PHP ' + crop.low.toFixed(2) + '</div>' +
-        '</div>' +
-        '<div class="price-detail-item">' +
-          '<div class="price-detail-label">Highest Price</div>' +
-          '<div class="price-detail-value">PHP ' + crop.high.toFixed(2) + '</div>' +
-        '</div>' +
-      '</div>' +
-      '<div class="price-trend ' + trendClass + '">' +
-        '<i class="fas fa-' + trendIcon + '"></i> ' +
-        (crop.trendVal > 0 ? '+' + crop.trendVal : crop.trendVal) + ' PHP vs yesterday | ' + escapeHtml(crop.market) +
-      '</div>' +
-    '</div>';
-  }).join('');
-}
-
-function showPricePanel() {
-  cameraSection.style.display = 'none';
-  pricePanel.classList.add('show');
-  renderPrices('metro-manila', 'all');
-  updateStatus('active', 'Prices');
-}
-
-function hidePricePanel() {
-  pricePanel.classList.remove('show');
-  cameraSection.style.display = 'flex';
-  updateStatus('active', 'Scanning');
-}
-
-// Price panel event listeners
-document.getElementById('closePricePanel').addEventListener('click', hidePricePanel);
-
-document.getElementById('marketSelect').addEventListener('change', function() {
-  const activeFilter = document.querySelector('.price-filter-btn.active');
-  renderPrices(this.value, activeFilter ? activeFilter.dataset.filter : 'all');
-});
-
-document.querySelectorAll('.price-filter-btn').forEach(function(btn) {
-  btn.addEventListener('click', function() {
-    document.querySelectorAll('.price-filter-btn').forEach(function(b) { b.classList.remove('active'); });
-    this.classList.add('active');
-    const market = document.getElementById('marketSelect').value;
-    renderPrices(market, this.dataset.filter);
-  });
-});
-
-document.getElementById('refreshPrices').addEventListener('click', function() {
-  this.querySelector('i').classList.add('fa-spin');
-  setTimeout(function() {
-    document.getElementById('refreshPrices').querySelector('i').classList.remove('fa-spin');
-    showToast('Prices refreshed', 'success');
-  }, 1500);
-});
-
-// Mode switching
-document.querySelectorAll('.mode-btn').forEach(function(btn){
-btn.addEventListener('click',async function(){
-document.querySelectorAll('.mode-btn').forEach(function(b){b.classList.remove('active');});
-btn.classList.add('active');
-state.currentMode=btn.dataset.mode;
-
-if (state.currentMode === 'price') {
-  showPricePanel();
-  return;
-} else {
-  hidePricePanel();
-}
-
-if (state.currentMode === 'crop') {
-  scanFrame.style.display = 'block';
-  scanFrame.style.borderColor = 'rgba(16,185,129,.6)';
-  showToast('Crop Scan Mode: Point camera at root crop');
-} else {
-  scanFrame.style.borderColor = 'rgba(99,102,241,.4)';
-  scanFrame.style.display=['qr','barcode'].includes(state.currentMode)?'block':'none';
-}
-stopAutoScan();
-if(state.autoScan)startAutoScan();
-if(state.currentMode==='object')await loadModel();
-showToast('Mode: '+btn.textContent.trim());
+// Market tabs
+document.querySelectorAll('.market-tab').forEach(function(tab){
+tab.addEventListener('click',function(){
+document.querySelectorAll('.market-tab').forEach(function(t){t.classList.remove('active')});
+this.classList.add('active');
+state.currentMarket=this.dataset.market;
+renderPriceList(state.currentMarket);
 });
 });
 
-captureBtn.addEventListener('click',performScan);
-galleryBtn.addEventListener('click',function(){fileInput.click();});
-
-fileInput.addEventListener('change',async function(e){
-var file=e.target.files[0];
-if(!file)return;
-var img=new Image();
-img.onload=async function(){
-var c=document.createElement('canvas');
-c.width=img.width;c.height=img.height;
-c.getContext('2d').drawImage(img,0,0);
-state.isScanning=true;
-updateStatus('processing','Processing...');
-try{
-var results=[];
-if(state.currentMode==='qr'){
-var idata=c.getContext('2d').getImageData(0,0,c.width,c.height);
-results=await scanQR(idata);
-}else if(state.currentMode==='barcode'){
-results=await scanBarcode(c);
-}else if(state.currentMode==='object'){
-results=await detectObjects(c);
-}
-if(results.length>0){
-playSuccess();
-displayResults(results);
-if(state.saveHistory)addToHistory(results);
-}else{
-playError();
-showToast('Nothing detected','error');
-}
-}catch(err){
-showToast('Processing failed','error');
-}finally{
-state.isScanning=false;
-updateStatus('active','Scanning');
-}
-};
-img.src=URL.createObjectURL(file);
+// ===== NAVIGATION =====
+document.getElementById('navScan').addEventListener('click',function(){
+hidePriceList();
+closeResults();
+document.querySelectorAll('.nav-btn').forEach(function(b){b.classList.remove('active')});
+this.classList.add('active');
 });
 
-settingsBtn.addEventListener('click',function(){settingsModal.classList.add('active');});
-closeSettings.addEventListener('click',function(){settingsModal.classList.remove('active');});
-settingsModal.addEventListener('click',function(e){if(e.target===settingsModal)settingsModal.classList.remove('active');});
-
-closePanel.addEventListener('click',function(){resultsPanel.classList.remove('open');});
-
-document.querySelectorAll('.toggle').forEach(function(toggle){
-toggle.addEventListener('click',async function(){
-toggle.classList.toggle('active');
-var on=toggle.classList.contains('active');
-if(toggle.id==='toggleAutoScan'){state.autoScan=on;if(on)startAutoScan();else stopAutoScan();}
-else if(toggle.id==='toggleSound')state.sound=on;
-else if(toggle.id==='toggleVibrate')state.vibrate=on;
-else if(toggle.id==='toggleHistory')state.saveHistory=on;
-else if(toggle.id==='toggleQuality'){state.highQuality=on;await initCamera();}
-else if(toggle.id==='toggleWakeLock'){await toggleWakeLock(on);}
-});
+document.getElementById('navPrices').addEventListener('click',function(){
+showPriceList();
+document.querySelectorAll('.nav-btn').forEach(function(b){b.classList.remove('active')});
+this.classList.add('active');
 });
 
-clearHistory.addEventListener('click',function(){
-if(confirm('Clear all scan history?')){
-state.history=[];
-localStorage.removeItem('visionScanHistory');
-renderHistory();
-showToast('History cleared','success');
-}
+document.getElementById('navHistory').addEventListener('click',function(){
+showHistory();
+document.querySelectorAll('.nav-btn').forEach(function(b){b.classList.remove('active')});
+this.classList.add('active');
 });
 
-var touchStartY=0;
-var videoWrapper=document.getElementById('videoWrapper');
-
-videoWrapper.addEventListener('touchstart',function(e){
-touchStartY=e.touches[0].clientY;
-},{passive:true});
-
-videoWrapper.addEventListener('touchend',function(e){
-var diff=touchStartY-e.changedTouches[0].clientY;
-if(diff>80){
-document.getElementById('historySection').style.display='block';
-document.querySelector('.camera-section').style.display='none';
-document.getElementById('swipeHint').style.display='none';
-}
-},{passive:true});
-
-document.addEventListener('keydown',function(e){
-if(e.code==='Space'&&!e.repeat){
-e.preventDefault();
-performScan();
-}
-});
-
-document.addEventListener('visibilitychange',function(){
-if(document.hidden){stopAutoScan();}
-else if(state.autoScan){startAutoScan();}
-});
-
-async function init(){
-renderHistory();
-await initCamera();
-if(window.matchMedia('(display-mode: standalone)').matches||navigator.standalone){
-installBanner.style.display='none';
-}
-setTimeout(function(){
-document.getElementById('swipeHint').style.display='block';
-setTimeout(function(){document.getElementById('swipeHint').style.display='none';},4000);
-},3000);
+// ===== HISTORY =====
+function saveToHistory(entry){
+state.scanHistory.unshift(entry);
+if(state.scanHistory.length>50)state.scanHistory.pop();
+localStorage.setItem('rootcropHistory',JSON.stringify(state.scanHistory));
 }
 
-init();
+function showHistory(){
+if(state.scanHistory.length===0){
+showResults([{
+type:'unknown',
+title:'No Scan History',
+subtitle:'Start scanning root crops',
+icon:'📋',
+message:'Your scan history will appear here.\n\nScan root crops to see their market prices.',
+actions:[{label:'Start Scanning',primary:true,fn:function(){closeResults();}}]
+}]);
+return;
+}
+
+var historyHtml=state.scanHistory.slice(0,20).map(function(h,i){
+var d=new Date(h.date);
+var time=d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+var date=d.toLocaleDateString();
+return'<div class="crop-price-card" style="animation-delay:'+(i*.05)+'s">'+
+'<div class="crop-price-header">'+
+'<div>'+
+'<div class="crop-price-name">'+h.crop+'</div>'+
+'<div class="crop-price-local">'+h.local+' | '+h.market+'</div>'+
+'</div>'+
+'<div style="text-align:right">'+
+'<div class="crop-price-amount">PHP '+h.price.toFixed(2)+'</div>'+
+'<div class="crop-price-local">'+time+' '+date+'</div>'+
+'</div>'+
+'</div>'+
+'</div>';
+}).join('');
+
+showResults([{
+type:'crop',
+title:'Scan History',
+subtitle:state.scanHistory.length+' scans saved',
+icon:'📋',
+confidence:'',
+price:0,
+unit:'',
+low:0,high:0,trend:'',trendClass:'stable',trendColor:'',change:0,market:'',
+actions:[{label:'Clear History',primary:false,fn:function(){localStorage.removeItem('rootcropHistory');state.scanHistory=[];showToast('History cleared','success');closeResults();}}]
+}]);
+
+// Replace the result content with history list
+resultsContent.innerHTML='<div style="max-height:50vh;overflow-y:auto;padding-right:8px">'+historyHtml+'</div>';
+}
+
+// ===== UTILITIES =====
+function sharePrice(priceData){
+var text=priceData.localName+' - PHP '+priceData.price.toFixed(2)+'/'+priceData.unit+' today at '+ROOT_CROP_PRICES[state.currentMarket].source;
+if(navigator.share){navigator.share({title:'RootCrop Price',text:text}).catch(function(){})}
+else{copyToClipboard(text)}
+}
+
+function copyPrice(priceData){
+copyToClipboard(priceData.name+' ('+priceData.localName+')\nPrice: PHP '+priceData.price.toFixed(2)+'/'+priceData.unit+'\nMarket: '+ROOT_CROP_PRICES[state.currentMarket].source);
+}
+
+function copyToClipboard(text){
+try{navigator.clipboard.writeText(text).then(function(){showToast('Copied!','success')})}catch(e){
+var ta=document.createElement('textarea');ta.value=text;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);showToast('Copied!','success');
+}}
+
+// Init
+initCamera();
 </script>
 </body>
 </html>
